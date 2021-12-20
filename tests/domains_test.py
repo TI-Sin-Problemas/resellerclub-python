@@ -1,7 +1,8 @@
+"""Unit Tests"""
 import unittest
 import tests_settings as settings
 
-from resellerclubapi import ResellerClubAPI
+from resellerclub import ResellerClubAPI
 
 
 class TestDomainAvailability(unittest.TestCase):
