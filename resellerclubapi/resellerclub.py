@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 import requests
-from urls import URLs
+from .urls import URLs
 
 
 class ResellerClubAPI:
