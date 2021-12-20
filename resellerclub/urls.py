@@ -37,3 +37,9 @@ class URLs:
     def domains_premium_availability_url(self):
         """Premium domain availability check URL"""
         return f"{self.base_url}{self.domains_url}premium/available.{self.format}"
+
+    def domains_third_level_name_availability_url(self):
+        """3rd level .NAME availability check URL"""
+        return (
+            f"{self.base_url}{self.domains_url}thirdlevelname/available.{self.format}"
+        )

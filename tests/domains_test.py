@@ -208,3 +208,28 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         )
 
         self.assertGreaterEqual(max_results, len(response))
+
+
+class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
+    """.NAME 3rd level availability check test case"""
+
+    def test_single_domain(self):
+        """Test single domain case"""
+        domain_names = ["domain.one"]
+        response = self.api.check_third_level_name_availability(domain_names)
+        test_against = {
+            "domain.one.name": {"classkey": "dotname", "status": "available"}
+        }
+
+        self.assertDictContainsSubset(response, test_against)
+
+    def test_multiple_domain(self):
+        """Test multiple domain case"""
+        domain_names = ["domain.one", "domain.two"]
+        response = self.api.check_third_level_name_availability(domain_names)
+        test_against = {
+            "domain.two.name": {"classkey": "dotname", "status": "available"},
+            "domain.one.name": {"classkey": "dotname", "status": "available"},
+        }
+
+        self.assertDictContainsSubset(response, test_against)

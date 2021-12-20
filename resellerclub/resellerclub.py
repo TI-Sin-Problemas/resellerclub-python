@@ -143,3 +143,11 @@ class ResellerClubAPI:
         url = self.urls.domains_premium_availability_url()
 
         return self.__get_data(url, params)
+
+    def check_third_level_name_availability(
+        self, domain_names: list
+    ) -> Union[dict, ElementTree.Element]:
+        params = {"domain-name": domain_names, "tlds": "*.name"}
+        url = self.urls.domains_third_level_name_availability_url()
+
+        return self.__get_data(url, params)
