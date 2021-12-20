@@ -33,3 +33,7 @@ class URLs:
     def domains_idn_availability_url(self):
         """Internationalized Domain Name availability check URL"""
         return f"{self.base_url}{self.domains_url}idn-available.{self.format}"
+
+    def domains_premium_availability_url(self):
+        """Premium domain availability check URL"""
+        return f"{self.base_url}{self.domains_url}premium/available.{self.format}"

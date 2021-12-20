@@ -105,3 +105,41 @@ class ResellerClubAPI:
         url = self.urls.domains_idn_availability_url()
 
         return self.__get_data(url, params)
+
+    def check_premium_domain_availability(
+        self,
+        keyword: str,
+        tlds: list,
+        highest_price: int = None,
+        lowest_price: int = None,
+        max_results: int = None,
+    ) -> Union[dict, ElementTree.Element]:
+        """Returns a list of Aftermarket Premium domain names based on the specified keyword.
+        This method only returns names available on the secondary market, and not those premium
+        names that are offered directly by any Registry for new registration.
+        https://manage.resellerclub.com/kb/answer/1948
+
+        Args:
+            keyword (str): Word or phrase (please enter the phrase without spaces) for which
+            premium search is requested
+            tlds (list): Domain name extensions (TLDs) you want to search in
+            highest_price (int, optional): Maximum price (in Reseller's Selling Currency) up to
+            which domain names must be suggested. Defaults to None.
+            lowest_price (int, optional): Minimum price (in Reseller's Selling Currency) for which
+            domain names must be suggested. Defaults to None.
+            max_results (int, optional): Number of results to be returned. Defaults to None.
+
+        Returns:
+            Union[dict, ElementTree.Element]: Dictionary or XML Element of domain names and prices
+        """
+
+        params = {
+            "key-word": keyword,
+            "tlds": tlds,
+            "price-high": highest_price,
+            "price-low": lowest_price,
+            "no-of-results": max_results,
+        }
+        url = self.urls.domains_premium_availability_url()
+
+        return self.__get_data(url, params)
