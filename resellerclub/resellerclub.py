@@ -32,7 +32,7 @@ class ResellerClubAPI:
 
     def __to_format(
         self, response: requests.Response
-    ) -> Union(dict, ElementTree.Element):
+    ) -> Union[dict, ElementTree.Element]:
         """Returns response parsed as dict from JSON or XML Element
 
         Args:
@@ -48,7 +48,7 @@ class ResellerClubAPI:
 
     def __get_data(
         self, url: str, params: dict = None
-    ) -> Union(dict, ElementTree.Element):
+    ) -> Union[dict, ElementTree.Element]:
         """Get response from API
 
         Args:
@@ -63,8 +63,9 @@ class ResellerClubAPI:
 
     def check_domain_availability(
         self, domain_names: list, tlds: list
-    ) -> Union(dict, ElementTree.Element):
+    ) -> Union[dict, ElementTree.Element]:
         """Checks the availability of the specified domain name(s).
+        https://manage.resellerclub.com/kb/answer/764
 
         Args:
             domain_names (list): Domain name(s) that you need to check the availability for
@@ -76,5 +77,31 @@ class ResellerClubAPI:
         """
         params = {"domain-name": domain_names, "tlds": tlds}
         url = self.urls.domains_availability_url()
+
+        return self.__get_data(url, params)
+
+    def check_domain_availability_idn(
+        self, domain_names: list, tld: str, idn_language_code: str
+    ) -> Union[dict, ElementTree.Element]:
+        """Checks the availability of the specified Internationalized Domain Name(s) (IDN)
+        https://manage.resellerclub.com/kb/answer/1427
+
+        Args:
+            domain_names (list): Internationalized Domaine Name(s) that you need to check the
+            availability for
+            tld (str): TLD for which the domain name availability needs to be checked
+            idn_language_code (str): While performing check availability for an Internationalized
+            Domain Name, you need to provide the corresponding language code
+
+        Returns:
+            dict | ElementTree.Element: Returns a dict or hash map containing domain name
+            availability status for the requested TLDs
+        """
+        params = {
+            "domain-name": domain_names,
+            "tld": tld,
+            "idnLanguageCode": idn_language_code,
+        }
+        url = self.urls.domains_idn_availability_url()
 
         return self.__get_data(url, params)

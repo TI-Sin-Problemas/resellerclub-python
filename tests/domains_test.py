@@ -5,10 +5,15 @@ import tests_settings as settings
 from resellerclub import ResellerClubAPI
 
 
-class TestDomainAvailability(unittest.TestCase):
-    """Domain Availability Test Cases"""
+class ResellerClubAPITestCase(unittest.TestCase):
+    """Base ResellerClub API Test Case"""
 
     api = ResellerClubAPI(settings.RESELLER_ID, settings.API_KEY)
+
+
+class TestDomainAvailability(ResellerClubAPITestCase):
+    """Domain Availability Test Cases"""
+
     single_domain = ["github"]
     single_tld = ["com"]
     multiple_domains = ["github", "google"]
@@ -60,5 +65,45 @@ class TestDomainAvailability(unittest.TestCase):
             "github.com": {"classkey": "domcno", "status": "regthroughothers"},
         }
         result = self.api.check_domain_availability(domain_names, tlds)
+
+        self.assertDictContainsSubset(result, test_against)
+
+
+class TestIDNAvailability(ResellerClubAPITestCase):
+    """IDN Availability Test Cases"""
+
+    single_domain = ["ѯҋ111"]
+    multiple_domains = ["ѯҋ111", "ѯҋ112"]
+    tld = "com"
+    idn_language_code = "aze"
+
+    def test_single_domain(self):
+        """Test single IDN case"""
+        domain_names = self.single_domain
+        tld = self.tld
+        idn_language_code = self.idn_language_code
+        test_against = {
+            "xn--111-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
+        }
+
+        result = self.api.check_domain_availability_idn(
+            domain_names, tld, idn_language_code
+        )
+
+        self.assertDictContainsSubset(result, test_against)
+
+    def test_multiple_domain(self):
+        """Test multiple IDNs case"""
+        domain_names = self.multiple_domains
+        tld = self.tld
+        idn_language_code = self.idn_language_code
+        test_against = {
+            "xn--111-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
+            "xn--112-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
+        }
+
+        result = self.api.check_domain_availability_idn(
+            domain_names, tld, idn_language_code
+        )
 
         self.assertDictContainsSubset(result, test_against)

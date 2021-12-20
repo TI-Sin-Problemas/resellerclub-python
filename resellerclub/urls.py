@@ -27,4 +27,9 @@ class URLs:
         self.domains_url = "domains/"
 
     def domains_availability_url(self):
+        """Domain availability check URL"""
         return f"{self.base_url}{self.domains_url}available.{self.format}"
+
+    def domains_idn_availability_url(self):
+        """Internationalized Domain Name availability check URL"""
+        return f"{self.base_url}{self.domains_url}idn-available.{self.format}"
