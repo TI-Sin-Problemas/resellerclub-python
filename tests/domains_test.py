@@ -6,6 +6,8 @@ from resellerclub import ResellerClubAPI
 
 
 class TestDomainAvailability(unittest.TestCase):
+    """Domain Availability Test Cases"""
+
     api = ResellerClubAPI(settings.RESELLER_ID, settings.API_KEY)
     single_domain = ["github"]
     single_tld = ["com"]
@@ -13,6 +15,7 @@ class TestDomainAvailability(unittest.TestCase):
     multiple_tlds = ["com", "net"]
 
     def test_single_domain_single_tld(self):
+        """Test single domain with single TLD case"""
         domain_names = self.single_domain
         tlds = self.single_tld
         test_against = {
@@ -23,6 +26,7 @@ class TestDomainAvailability(unittest.TestCase):
         self.assertDictContainsSubset(result, test_against)
 
     def test_single_domain_multiple_tlds(self):
+        """Test single domain with multiple TLDs case"""
         domain_names = self.single_domain
         tlds = self.multiple_tlds
         test_against = {
@@ -34,6 +38,7 @@ class TestDomainAvailability(unittest.TestCase):
         self.assertDictContainsSubset(result, test_against)
 
     def test_multiple_domains_single_tld(self):
+        """Test multiple domains with single TLD case"""
         domain_names = self.multiple_domains
         tlds = self.single_tld
         test_against = {
@@ -45,6 +50,7 @@ class TestDomainAvailability(unittest.TestCase):
         self.assertDictContainsSubset(result, test_against)
 
     def test_multiple_domains_multiple_tlds(self):
+        """Test multiple domains with multiple TLDs case"""
         domain_names = self.multiple_domains
         tlds = self.multiple_tlds
         test_against = {
