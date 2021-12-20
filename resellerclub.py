@@ -38,3 +38,7 @@ class ResellerClubAPI:
         full_params = self.__add_auth(params)
         return self.__to_format(requests.get(url, full_params))
 
+    def check_domain_availability(self, domain_names: list, tlds: list):
+        params = {"domain-name": domain_names, "tlds": tlds}
+
+        return self.__get_data(self.urls.domains_availability_url(), params)

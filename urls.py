@@ -23,3 +23,8 @@ class URLs:
         self.base_url = self.test_url if debug else self.prod_url
         self.format = response_format
 
+        # Domains urls
+        self.domains_url = "domains/"
+
+    def domains_availability_url(self):
+        return f"{self.base_url}{self.domains_url}available.{self.format}"
