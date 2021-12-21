@@ -24,3 +24,7 @@ class DomainsURLs(BaseURLs):
     def check_third_level_name_availability(self):
         """3rd level .NAME availability check URL"""
         return f"{self.base_url}thirdlevelname/available.{self.format}/"
+
+    def suggest_names(self):
+        """Suggest Names URL"""
+        return f"{self.base_url}v5/suggest-names.{self.format}/"

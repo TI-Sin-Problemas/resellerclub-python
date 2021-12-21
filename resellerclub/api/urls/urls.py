@@ -1,8 +1,8 @@
 """ResellerClub API URLs"""
 
 
-from resellerclub.urls.base import BaseURLs
-from resellerclub.urls.domains import DomainsURLs
+from .base import BaseURLs
+from .domains import DomainsURLs
 
 
 class URLs(BaseURLs):

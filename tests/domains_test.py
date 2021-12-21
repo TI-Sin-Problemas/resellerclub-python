@@ -26,7 +26,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         test_against = {
             "github.com": {"classkey": "domcno", "status": "regthroughothers"}
         }
-        result = self.api.check_domain_availability(domain_names, tlds)
+        result = self.api.domains.check_availability(domain_names, tlds)
 
         self.assertDictContainsSubset(result, test_against)
 
@@ -38,7 +38,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
             "github.com": {"classkey": "domcno", "status": "regthroughothers"},
             "github.net": {"classkey": "dotnet", "status": "regthroughothers"},
         }
-        result = self.api.check_domain_availability(domain_names, tlds)
+        result = self.api.domains.check_availability(domain_names, tlds)
 
         self.assertDictContainsSubset(result, test_against)
 
@@ -50,7 +50,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
             "github.com": {"classkey": "domcno", "status": "regthroughothers"},
             "google.com": {"classkey": "domcno", "status": "regthroughothers"},
         }
-        result = self.api.check_domain_availability(domain_names, tlds)
+        result = self.api.domains.check_availability(domain_names, tlds)
 
         self.assertDictContainsSubset(result, test_against)
 
@@ -64,7 +64,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
             "google.net": {"classkey": "dotnet", "status": "regthroughothers"},
             "github.com": {"classkey": "domcno", "status": "regthroughothers"},
         }
-        result = self.api.check_domain_availability(domain_names, tlds)
+        result = self.api.domains.check_availability(domain_names, tlds)
 
         self.assertDictContainsSubset(result, test_against)
 
@@ -86,7 +86,7 @@ class TestIDNAvailability(ResellerClubAPITestCase):
             "xn--111-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
         }
 
-        result = self.api.check_domain_availability_idn(
+        result = self.api.domains.check_idn_availability(
             domain_names, tld, idn_language_code
         )
 
@@ -102,7 +102,7 @@ class TestIDNAvailability(ResellerClubAPITestCase):
             "xn--112-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
         }
 
-        result = self.api.check_domain_availability_idn(
+        result = self.api.domains.check_idn_availability(
             domain_names, tld, idn_language_code
         )
 
@@ -124,7 +124,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         keyword = self.keyword
         tlds = self.single_tld
 
-        response = self.api.check_premium_domain_availability(keyword, tlds)
+        response = self.api.domains.check_premium_domain_availability(keyword, tlds)
 
         keyword_in_response = all(keyword in key for key in response)
 
@@ -142,7 +142,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         keyword = self.keyword
         tlds = self.multiple_tlds
 
-        response = self.api.check_premium_domain_availability(keyword, tlds)
+        response = self.api.domains.check_premium_domain_availability(keyword, tlds)
 
         keyword_in_response = all(keyword in key for key in response)
 
@@ -159,7 +159,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         """Test highest price case"""
         highest_price = self.highest_price
 
-        response = self.api.check_premium_domain_availability(
+        response = self.api.domains.check_premium_domain_availability(
             self.keyword, self.single_tld, highest_price
         )
 
@@ -173,7 +173,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         """Test lowest price case"""
         lowest_price = self.lowest_price
 
-        response = self.api.check_premium_domain_availability(
+        response = self.api.domains.check_premium_domain_availability(
             self.keyword, self.single_tld, lowest_price=lowest_price
         )
 
@@ -187,7 +187,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         lowest_price = self.lowest_price
         highest_price = self.highest_price
 
-        response = self.api.check_premium_domain_availability(
+        response = self.api.domains.check_premium_domain_availability(
             self.keyword, self.single_tld, highest_price, lowest_price
         )
 
@@ -203,7 +203,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
 
         max_results = self.max_results
 
-        response = self.api.check_premium_domain_availability(
+        response = self.api.domains.check_premium_domain_availability(
             self.keyword, self.single_tld, max_results=max_results
         )
 
@@ -216,7 +216,7 @@ class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
     def test_single_domain(self):
         """Test single domain case"""
         domain_names = ["domain.one"]
-        response = self.api.check_third_level_name_availability(domain_names)
+        response = self.api.domains.check_third_level_name_availability(domain_names)
         test_against = {
             "domain.one.name": {"classkey": "dotname", "status": "available"}
         }
@@ -226,7 +226,7 @@ class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
     def test_multiple_domain(self):
         """Test multiple domain case"""
         domain_names = ["domain.one", "domain.two"]
-        response = self.api.check_third_level_name_availability(domain_names)
+        response = self.api.domains.check_third_level_name_availability(domain_names)
         test_against = {
             "domain.two.name": {"classkey": "dotname", "status": "available"},
             "domain.one.name": {"classkey": "dotname", "status": "available"},
