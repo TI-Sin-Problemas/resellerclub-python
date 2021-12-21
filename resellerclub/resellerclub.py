@@ -76,7 +76,7 @@ class ResellerClubAPI:
             availability status for the requested TLDs
         """
         params = {"domain-name": domain_names, "tlds": tlds}
-        url = self.urls.domains_availability_url()
+        url = self.urls.domains.check_availability()
 
         return self.__get_data(url, params)
 
@@ -102,7 +102,7 @@ class ResellerClubAPI:
             "tld": tld,
             "idnLanguageCode": idn_language_code,
         }
-        url = self.urls.domains_idn_availability_url()
+        url = self.urls.domains.check_idn_availability()
 
         return self.__get_data(url, params)
 
@@ -140,14 +140,24 @@ class ResellerClubAPI:
             "price-low": lowest_price,
             "no-of-results": max_results,
         }
-        url = self.urls.domains_premium_availability_url()
+        url = self.urls.domains.check_premium_availability()
 
         return self.__get_data(url, params)
 
     def check_third_level_name_availability(
         self, domain_names: list
     ) -> Union[dict, ElementTree.Element]:
+        """Checks the availability of the specified 3rd level .NAME domain name(s).
+        https://manage.resellerclub.com/kb/node/2931
+
+        Args:
+            domain_names (list): Domain name(s) that you need to check the availability for.
+
+        Returns:
+            Union[dict, ElementTree.Element]: Dict or hash map containing domain name availability
+            status for the requested TLDs.
+        """
         params = {"domain-name": domain_names, "tlds": "*.name"}
-        url = self.urls.domains_third_level_name_availability_url()
+        url = self.urls.domains.check_third_level_name_availability()
 
         return self.__get_data(url, params)
