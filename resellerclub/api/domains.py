@@ -107,3 +107,34 @@ class DomainsApi(BaseApi):
         url = self.urls.domains.check_third_level_name_availability()
 
         return self._get_data(url, params)
+
+    def suggest_names(
+        self,
+        keyword: str,
+        tld_only: str = None,
+        exact_match: bool = None,
+        adult: bool = None,
+    ) -> Union[dict, ElementTree.Element]:
+        """Returns domain name suggestions for a user-specified keyword.
+        https://manage.resellerclub.com/kb/answer/1085
+
+        Args:
+            keyword (str): Search term (keyword or phrase) e.g. "search" or "search world"
+            tld_only (str, optional): Specific TLD(s) you may want to search for. Defaults to None.
+            exact_match (bool, optional): Will return keyword alternatives when set to True.
+            Can be set to False to only return TLD alternatives. Defaults to None.
+            adult (bool, optional): If set to false, the suggestions will not contain any adult or
+            explicit suggestions which contain words like "nude", "porn", etc. Defaults to None.
+
+        Returns:
+            Union[dict, ElementTree.Element]: Dict or hash map containing availability status of suggested domain names for the keyword supplied.
+        """
+        params = {
+            "keyword": keyword,
+            "tld-only": tld_only,
+            "exact-match": exact_match,
+            "adult": adult,
+        }
+        url = self.urls.domains.suggest_names()
+
+        return self._get_data(url, params)

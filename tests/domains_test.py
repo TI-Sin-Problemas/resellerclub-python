@@ -2,6 +2,7 @@
 import unittest
 import tests_settings as settings
 
+from fuzzywuzzy import fuzz
 from resellerclub import ResellerClubAPI
 
 
@@ -233,3 +234,44 @@ class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
         }
 
         self.assertDictContainsSubset(response, test_against)
+
+
+class TestSuggestNames(ResellerClubAPITestCase):
+    """Suggest name test case"""
+
+    keyword = "reseller"
+
+    def test_keyword_only(self):
+        """Test suggest names with keyword only"""
+        response = self.api.domains.suggest_names(self.keyword)
+
+        is_expected_response = any(
+            item for item in response if fuzz.partial_ratio(self.keyword, item) < 75
+        )
+
+        self.assertFalse(is_expected_response, "Some results are less than 75% similar")
+
+    def test_tld(self):
+        """Test suggest names with keyword and .com tld"""
+        tld = "com"
+        response = self.api.domains.suggest_names(self.keyword, tld)
+
+        is_response_dissimilar = any(
+            item for item in response if fuzz.partial_ratio(self.keyword, item) < 75
+        )
+        tld_not_in_response = any(item for item in response if "." + tld not in item)
+
+        self.assertFalse(
+            is_response_dissimilar, "Some results are less than 75% similar"
+        )
+        self.assertFalse(tld_not_in_response, "Some results do not contain TLD")
+
+    def test_exact_match(self):
+        """Test suggest names with keyword exact match"""
+        response = self.api.domains.suggest_names(self.keyword, exact_match=True)
+
+        is_response_exact_match = any(
+            item for item in response if self.keyword not in item
+        )
+
+        self.assertFalse(is_response_exact_match, "Results are not exact match")
