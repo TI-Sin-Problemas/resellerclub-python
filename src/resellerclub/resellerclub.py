@@ -1,10 +1,10 @@
 """ResellerClub API Client"""
 
-from resellerclub.api.domains import DomainsApi
+from .api.domains import DomainsApi
 
 
 class ResellerClubAPI:
-    """ResellerClub API"""
+    """ResellerClub API Client"""
 
     def __init__(
         self,
