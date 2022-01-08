@@ -3,7 +3,7 @@ import unittest
 import tests_settings as settings
 
 from fuzzywuzzy import fuzz
-from resellerclub import ResellerClubAPI
+from src.resellerclub import ResellerClubAPI
 
 
 class ResellerClubAPITestCase(unittest.TestCase):
