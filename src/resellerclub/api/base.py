@@ -4,6 +4,8 @@ from xml.etree import ElementTree
 
 import requests
 
+from ..exceptions import ResellerClubAPIException
+
 from .urls import URLs
 
 
@@ -45,4 +47,12 @@ class BaseClient:
         full_params = self.__add_auth(params)
         response = requests.get(url, full_params, timeout=120)
 
-        return response.json()
+        try:
+            data = response.json()
+        except requests.JSONDecodeError:
+            response.raise_for_status()
+
+        if not response.ok:
+            raise ResellerClubAPIException(data["message"])
+
+        return data
