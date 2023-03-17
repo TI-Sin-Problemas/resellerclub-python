@@ -4,8 +4,8 @@ from xml.etree import ElementTree
 from .base import BaseClient
 
 
-class DomainsApi(BaseClient):
-    """Domains API. Methods to Search, Register or Renew domain names, etc."""
+class DomainsClient(BaseClient):
+    """Domains API Client. Methods to Search, Register or Renew domain names, etc."""
 
     def check_availability(
         self, domain_names: list, tlds: list

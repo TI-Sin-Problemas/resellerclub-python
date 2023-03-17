@@ -1,1 +1,1 @@
-from .domains import DomainsApi
+from .domains import DomainsClient

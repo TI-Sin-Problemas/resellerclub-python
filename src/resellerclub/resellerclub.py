@@ -1,6 +1,6 @@
 """ResellerClub API Client"""
 
-from .api.domains import DomainsApi
+from .api.domains import DomainsClient
 
 
 class ResellerClubAPI:
