@@ -1,11 +1,7 @@
 """Base API classes"""
-from typing import Union
-from xml.etree import ElementTree
-
 import requests
 
 from ..exceptions import ResellerClubAPIException
-
 from .urls import URLs
 
 
@@ -32,9 +28,7 @@ class BaseClient:
 
         return {**params, **auth_dict}
 
-    def _get_data(
-        self, url: str, params: dict = None
-    ) -> Union[dict, ElementTree.Element]:
+    def _get_data(self, url: str, params: dict = None) -> dict:
         """Get response from API
 
         Args:
@@ -42,7 +36,7 @@ class BaseClient:
             params (dict, optional): Parameters of the request. Defaults to None.
 
         Returns:
-            dict | ElementTree.Element: dict or hash map with response data
+            dict: dict with response data
         """
         full_params = self.__add_auth(params)
         response = requests.get(url, full_params, timeout=120)
