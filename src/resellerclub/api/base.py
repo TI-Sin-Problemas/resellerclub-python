@@ -7,8 +7,8 @@ import requests
 from .urls import URLs
 
 
-class BaseApi:
-    """Base API class"""
+class BaseClient:
+    """Base API Client class"""
 
     def __init__(
         self,
@@ -61,4 +61,4 @@ class BaseApi:
             dict | ElementTree.Element: dict or hash map with response data
         """
         full_params = self.__add_auth(params)
-        return self.__to_format(requests.get(url, full_params))
+        return self.__to_format(requests.get(url, full_params, timeout=60))

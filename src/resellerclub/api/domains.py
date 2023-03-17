@@ -1,10 +1,10 @@
 from typing import Union
 from xml.etree import ElementTree
 
-from .base import BaseApi
+from .base import BaseClient
 
 
-class DomainsApi(BaseApi):
+class DomainsApi(BaseClient):
     """Domains API. Methods to Search, Register or Renew domain names, etc."""
 
     def check_availability(
