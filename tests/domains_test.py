@@ -1,9 +1,11 @@
 """Unit Tests"""
 import unittest
-import tests_settings as settings
 
+import tests_settings as settings
 from fuzzywuzzy import fuzz
+
 from src.resellerclub import ResellerClubAPI
+from src.resellerclub.api.domains import Availability
 
 
 class ResellerClubAPITestCase(unittest.TestCase):
@@ -15,59 +17,48 @@ class ResellerClubAPITestCase(unittest.TestCase):
 class TestDomainAvailability(ResellerClubAPITestCase):
     """Domain Availability Test Cases"""
 
-    single_domain = ["github"]
-    single_tld = ["com"]
-    multiple_domains = ["github", "google"]
-    multiple_tlds = ["com", "net"]
+    domains = ["github", "google"]
+    tlds = ["com", "net"]
 
     def test_single_domain_single_tld(self):
         """Test single domain with single TLD case"""
-        domain_names = self.single_domain
-        tlds = self.single_tld
-        test_against = {
-            "github.com": {"classkey": "domcno", "status": "regthroughothers"}
-        }
-        result = self.api.domains.check_availability(domain_names, tlds)
+        domain = self.domains[0]
+        tld = self.tlds[0]
+        result = self.api.domains.check_availability([domain], [tld])
 
-        self.assertDictContainsSubset(result, test_against)
+        expected_domain = f"{domain}.{tld}"
+        self.assertIn(expected_domain, result.keys())
+        self.assertIsInstance(result[expected_domain], Availability)
 
     def test_single_domain_multiple_tlds(self):
         """Test single domain with multiple TLDs case"""
-        domain_names = self.single_domain
-        tlds = self.multiple_tlds
-        test_against = {
-            "github.com": {"classkey": "domcno", "status": "regthroughothers"},
-            "github.net": {"classkey": "dotnet", "status": "regthroughothers"},
-        }
-        result = self.api.domains.check_availability(domain_names, tlds)
+        domain = self.domains[0]
+        tlds = self.tlds
+        result = self.api.domains.check_availability([domain], tlds)
 
-        self.assertDictContainsSubset(result, test_against)
+        expected_domains = [f"{domain}.{tld}" for tld in tlds]
+        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
+        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
 
     def test_multiple_domains_single_tld(self):
         """Test multiple domains with single TLD case"""
-        domain_names = self.multiple_domains
-        tlds = self.single_tld
-        test_against = {
-            "github.com": {"classkey": "domcno", "status": "regthroughothers"},
-            "google.com": {"classkey": "domcno", "status": "regthroughothers"},
-        }
-        result = self.api.domains.check_availability(domain_names, tlds)
+        domains = self.domains
+        tld = self.tlds[0]
+        result = self.api.domains.check_availability(domains, [tld])
 
-        self.assertDictContainsSubset(result, test_against)
+        expected_domains = [f"{domain}.{tld}" for domain in domains]
+        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
+        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
 
     def test_multiple_domains_multiple_tlds(self):
         """Test multiple domains with multiple TLDs case"""
-        domain_names = self.multiple_domains
-        tlds = self.multiple_tlds
-        test_against = {
-            "google.com": {"classkey": "domcno", "status": "regthroughothers"},
-            "github.net": {"classkey": "dotnet", "status": "regthroughothers"},
-            "google.net": {"classkey": "dotnet", "status": "regthroughothers"},
-            "github.com": {"classkey": "domcno", "status": "regthroughothers"},
-        }
-        result = self.api.domains.check_availability(domain_names, tlds)
+        domains = self.domains
+        tlds = self.tlds
+        result = self.api.domains.check_availability(domains, tlds)
 
-        self.assertDictContainsSubset(result, test_against)
+        expected_domains = [f"{domain}.{tld}" for domain in domains for tld in tlds]
+        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
+        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
 
 
 class TestIDNAvailability(ResellerClubAPITestCase):
