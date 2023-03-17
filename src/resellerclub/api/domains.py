@@ -39,7 +39,7 @@ class DomainsClient(BaseClient):
 
     def check_idn_availability(
         self, domain_names: list, tld: str, idn_language_code: str
-    ) -> Union[dict, ElementTree.Element]:
+    ) -> Dict[str, Availability]:
         """Checks the availability of the specified Internationalized Domain Name(s) (IDN)
         https://manage.resellerclub.com/kb/answer/1427
 
@@ -51,8 +51,8 @@ class DomainsClient(BaseClient):
             Domain Name, you need to provide the corresponding language code
 
         Returns:
-            dict | ElementTree.Element: Returns a dict or hash map containing domain name
-            availability status for the requested TLDs
+            Dict[str, Availability]: Returns a dict containing domain name availability status for
+            the requested TLDs
         """
         params = {
             "domain-name": domain_names,
@@ -60,8 +60,12 @@ class DomainsClient(BaseClient):
             "idnLanguageCode": idn_language_code,
         }
         url = self.urls.domains.check_idn_availability()
+        data = self._get_data(url, params)
 
-        return self._get_data(url, params)
+        return {
+            domain: Availability(**availability)
+            for domain, availability in data.items()
+        }
 
     def check_premium_domain_availability(
         self,

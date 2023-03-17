@@ -1,4 +1,5 @@
 """Unit Tests"""
+import idna
 import unittest
 
 import tests_settings as settings
@@ -64,41 +65,35 @@ class TestDomainAvailability(ResellerClubAPITestCase):
 class TestIDNAvailability(ResellerClubAPITestCase):
     """IDN Availability Test Cases"""
 
-    single_domain = ["ѯҋ111"]
-    multiple_domains = ["ѯҋ111", "ѯҋ112"]
+    domains = ["ѯҋ111", "ѯҋ112"]
     tld = "com"
     idn_language_code = "aze"
 
     def test_single_domain(self):
         """Test single IDN case"""
-        domain_names = self.single_domain
+        domain = self.domains[0]
         tld = self.tld
-        idn_language_code = self.idn_language_code
-        test_against = {
-            "xn--111-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
-        }
-
         result = self.api.domains.check_idn_availability(
-            domain_names, tld, idn_language_code
+            [domain], tld, self.idn_language_code
         )
 
-        self.assertDictContainsSubset(result, test_against)
+        punycode_domain = idna.encode(domain).decode()
+        expected_domain = f"{punycode_domain}.{tld}"
+        self.assertIn(expected_domain, result.keys())
+        self.assertIsInstance(result[expected_domain], Availability)
 
-    def test_multiple_domain(self):
+    def test_multiple_domains(self):
         """Test multiple IDNs case"""
-        domain_names = self.multiple_domains
+        domains = self.domains
         tld = self.tld
-        idn_language_code = self.idn_language_code
-        test_against = {
-            "xn--111-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
-            "xn--112-dkd4l.com": {"classkey": "domcno", "status": "regthroughothers"},
-        }
-
         result = self.api.domains.check_idn_availability(
-            domain_names, tld, idn_language_code
+            domains, tld, self.idn_language_code
         )
 
-        self.assertDictContainsSubset(result, test_against)
+        punycode_domains = [idna.encode(domain).decode() for domain in domains]
+        expected_domains = [f"{domain}.{tld}" for domain in punycode_domains]
+        self.assertListEqual(sorted(expected_domains), sorted(result.keys()))
+        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
 
 
 class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
