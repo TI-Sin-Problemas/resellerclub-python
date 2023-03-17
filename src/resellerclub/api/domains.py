@@ -1,7 +1,14 @@
-from typing import Union
+from typing import Dict, NamedTuple, Union
 from xml.etree import ElementTree
 
 from .base import BaseClient
+
+
+class Availability(NamedTuple):
+    """Domain name availability for TLDs"""
+
+    status: str
+    classkey: str = None
 
 
 class DomainsClient(BaseClient):
@@ -9,7 +16,7 @@ class DomainsClient(BaseClient):
 
     def check_availability(
         self, domain_names: list, tlds: list
-    ) -> Union[dict, ElementTree.Element]:
+    ) -> Dict[str, Availability]:
         """Checks the availability of the specified domain name(s).
         https://manage.resellerclub.com/kb/answer/764
 
@@ -18,13 +25,17 @@ class DomainsClient(BaseClient):
             tlds (list): TLDs for which the domain name availability needs to be checkedW
 
         Returns:
-            dict | ElementTree.Element: Returns a hash map or dict containing domain name
-            availability status for the requested TLDs
+            Dict[str, Availability]: Returns a dict containing domain name availability status
+            for the requested TLDs
         """
         params = {"domain-name": domain_names, "tlds": tlds}
         url = self.urls.domains.check_availability()
+        data = self._get_data(url, params)
 
-        return self._get_data(url, params)
+        return {
+            domain: Availability(**availability)
+            for domain, availability in data.items()
+        }
 
     def check_idn_availability(
         self, domain_names: list, tld: str, idn_language_code: str
