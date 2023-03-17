@@ -74,7 +74,7 @@ class DomainsClient(BaseClient):
         highest_price: int = None,
         lowest_price: int = None,
         max_results: int = None,
-    ) -> Union[dict, ElementTree.Element]:
+    ) -> Dict[str, float]:
         """Returns a list of Aftermarket Premium domain names based on the specified keyword.
         This method only returns names available on the secondary market, and not those premium
         names that are offered directly by any Registry for new registration.
@@ -91,7 +91,7 @@ class DomainsClient(BaseClient):
             max_results (int, optional): Number of results to be returned. Defaults to None.
 
         Returns:
-            Union[dict, ElementTree.Element]: Dictionary or XML Element of domain names and prices
+            Dict[str, float]: Dictionary of domain names and prices
         """
 
         params = {
@@ -102,8 +102,9 @@ class DomainsClient(BaseClient):
             "no-of-results": max_results,
         }
         url = self.urls.domains.check_premium_availability()
+        data = self._get_data(url, params)
 
-        return self._get_data(url, params)
+        return {domain: float(price) for domain, price in data.items()}
 
     def check_third_level_name_availability(
         self, domain_names: list

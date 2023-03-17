@@ -100,8 +100,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
     """Premium domains availability check test case"""
 
     keyword = "domain"
-    single_tld = ["com"]
-    multiple_tlds = ["com", "net", "org"]
+    tlds = ["com", "net", "org"]
     highest_price = 10000
     lowest_price = 100
     max_results = 10
@@ -109,90 +108,67 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
     def test_single_tld(self):
         """Test single TLD case"""
         keyword = self.keyword
-        tlds = self.single_tld
+        tld = self.tlds[0]
 
-        response = self.api.domains.check_premium_domain_availability(keyword, tlds)
+        response = self.api.domains.check_premium_domain_availability(keyword, [tld])
 
-        keyword_in_response = all(keyword in key for key in response)
+        domains = response.keys()
+        is_keyword_in_domains = all(keyword in domain for domain in domains)
+        is_tld_in_domains = all(domain.endswith(tld) for domain in domains)
 
-        tld_in_response = False
-        for tld in tlds:
-            tld_in_response = all(tld in key for key in response)
-            if tld_in_response is False:
-                break
-
-        self.assertTrue(keyword_in_response, "Keyword is not in response")
-        self.assertTrue(tld_in_response, "TLD is not in response")
+        self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
+        self.assertTrue(is_tld_in_domains, "TLD is not in response")
 
     def test_multiple_tlds(self):
         """Test multiple TLDs case"""
         keyword = self.keyword
-        tlds = self.multiple_tlds
+        tlds = self.tlds
 
         response = self.api.domains.check_premium_domain_availability(keyword, tlds)
 
-        keyword_in_response = all(keyword in key for key in response)
+        domains = response.keys()
+        is_keyword_in_domains = all(keyword in key for key in response)
+        is_tld_in_domains = all(any(d.endswith(tld) for d in domains) for tld in tlds)
 
-        tld_in_response = False
-        for tld in tlds:
-            tld_in_response = any(tld in key for key in response)
-            if tld_in_response is False:
-                break
-
-        self.assertTrue(keyword_in_response, "Keyword is not in response")
-        self.assertTrue(tld_in_response, "TLD is not in response")
+        self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
+        self.assertTrue(is_tld_in_domains, "TLD is not in response")
 
     def test_highest_price(self):
         """Test highest price case"""
         highest_price = self.highest_price
+        params = [self.keyword, self.tlds[0], highest_price]
+        response = self.api.domains.check_premium_domain_availability(*params)
 
-        response = self.api.domains.check_premium_domain_availability(
-            self.keyword, self.single_tld, highest_price
-        )
-
-        response_highest_price = 0
-        prices = [float(item[1]) for item in response.items()]
-        response_highest_price = max(prices)
-
-        self.assertGreaterEqual(highest_price, response_highest_price)
+        self.assertGreaterEqual(highest_price, max(response.values()))
 
     def test_lowest_price(self):
         """Test lowest price case"""
         lowest_price = self.lowest_price
+        params = [self.keyword, self.tlds[0], None, lowest_price]
+        response = self.api.domains.check_premium_domain_availability(*params)
 
-        response = self.api.domains.check_premium_domain_availability(
-            self.keyword, self.single_tld, lowest_price=lowest_price
-        )
-
-        prices = [float(item[1]) for item in response.items()]
-        response_lowest_price = min(prices)
-
-        self.assertGreaterEqual(response_lowest_price, lowest_price)
+        self.assertGreaterEqual(min(response.values()), lowest_price)
 
     def test_highest_and_lowest_price(self):
         """Test highest and lowest price case"""
         lowest_price = self.lowest_price
         highest_price = self.highest_price
+        params = [self.keyword, self.tlds[0], highest_price, lowest_price]
+        response = self.api.domains.check_premium_domain_availability(*params)
 
-        response = self.api.domains.check_premium_domain_availability(
-            self.keyword, self.single_tld, highest_price, lowest_price
-        )
-
-        prices = [float(item[1]) for item in response.items()]
-        response_lowest_price = min(prices)
-        response_highest_price = max(prices)
-
-        self.assertGreaterEqual(response_lowest_price, lowest_price)
-        self.assertGreaterEqual(highest_price, response_highest_price)
+        prices = response.values()
+        self.assertGreaterEqual(min(prices), lowest_price)
+        self.assertGreaterEqual(highest_price, max(prices))
 
     def test_max_results(self):
         """Test max results case"""
-
         max_results = self.max_results
-
-        response = self.api.domains.check_premium_domain_availability(
-            self.keyword, self.single_tld, max_results=max_results
-        )
+        params = {
+            "keyword": self.keyword,
+            "tlds": self.tlds[0],
+            "max_results": max_results,
+        }
+        response = self.api.domains.check_premium_domain_availability(**params)
 
         self.assertGreaterEqual(max_results, len(response))
 
