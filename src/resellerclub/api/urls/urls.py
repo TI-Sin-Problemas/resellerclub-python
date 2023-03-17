@@ -11,14 +11,14 @@ class URLs(BaseURLs):
     prod_url = "https://httpapi.com/api/"
     test_url = "https://test.httpapi.com/api/"
 
-    def __init__(self, debug: bool = True, response_format: str = "json") -> None:
+    def __init__(self, test_mode: bool = True) -> None:
         """Stores all API URLs
 
         Args:
             debug (bool, optional): Use the test or live API URLs. Defaults to True.
             response_format (str, optional): Valid values are json or xml. Defaults to "json".
         """
-        base_url = self.test_url if debug else self.prod_url
+        base_url = self.test_url if test_mode else self.prod_url
         super().__init__(base_url, response_format)
 
         # Domains urls

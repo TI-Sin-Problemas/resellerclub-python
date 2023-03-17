@@ -15,12 +15,12 @@ class BaseClient:
         auth_userid: str,
         api_key: str,
         response_format: str = "json",
-        debug: bool = True,
+        test_mode: bool = True,
     ) -> None:
         self.auth_userid = auth_userid
         self.api_key = api_key
         self.response_format = response_format
-        self.urls = URLs(debug, response_format)
+        self.urls = URLs(test_mode, response_format)
 
     def __add_auth(self, params: dict) -> dict:
         """Adds auth data to request params
