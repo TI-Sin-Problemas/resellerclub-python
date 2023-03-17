@@ -6,7 +6,7 @@ import tests_settings as settings
 from fuzzywuzzy import fuzz
 
 from src.resellerclub import ResellerClubAPI
-from src.resellerclub.api.domains import Availability
+from src.resellerclub.client.domains import Availability
 
 
 class ResellerClubAPITestCase(unittest.TestCase):
