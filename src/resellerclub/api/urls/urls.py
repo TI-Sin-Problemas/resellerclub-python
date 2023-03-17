@@ -19,7 +19,7 @@ class URLs(BaseURLs):
             response_format (str, optional): Valid values are json or xml. Defaults to "json".
         """
         base_url = self.test_url if test_mode else self.prod_url
-        super().__init__(base_url, response_format)
+        super().__init__(base_url)
 
         # Domains urls
-        self.domains = DomainsURLs(self.base_url, response_format)
+        self.domains = DomainsURLs(self.base_url)

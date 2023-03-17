@@ -14,13 +14,11 @@ class BaseClient:
         self,
         auth_userid: str,
         api_key: str,
-        response_format: str = "json",
         test_mode: bool = True,
     ) -> None:
         self.auth_userid = auth_userid
         self.api_key = api_key
-        self.response_format = response_format
-        self.urls = URLs(test_mode, response_format)
+        self.urls = URLs(test_mode)
 
     def __add_auth(self, params: dict) -> dict:
         """Adds auth data to request params
@@ -31,22 +29,6 @@ class BaseClient:
         auth_dict = {"auth-userid": self.auth_userid, "api-key": self.api_key}
 
         return {**params, **auth_dict}
-
-    def __to_format(
-        self, response: requests.Response
-    ) -> Union[dict, ElementTree.Element]:
-        """Returns response parsed as dict from JSON or XML Element
-
-        Args:
-            response (requests.Response): Response from requests.get method
-
-        Returns:
-            dict | ElementTree.Element: dict from JSON response or hash map from XML response
-        """
-        if self.response_format == "xml":
-            return ElementTree.fromstring(response.content)
-
-        return response.json()
 
     def _get_data(
         self, url: str, params: dict = None
@@ -61,4 +43,6 @@ class BaseClient:
             dict | ElementTree.Element: dict or hash map with response data
         """
         full_params = self.__add_auth(params)
-        return self.__to_format(requests.get(url, full_params, timeout=60))
+        response = requests.get(url, full_params, timeout=120)
+
+        return response.json()

@@ -12,7 +12,7 @@ class BaseURLs:
     def __str__(self) -> str:
         return self.base_url
 
-    def __init__(self, base_url: str = "", response_format: str = "json") -> None:
+    def __init__(self, base_url: str = "") -> None:
         """Stores URLs
 
         Args:
@@ -20,4 +20,3 @@ class BaseURLs:
             response_format (str, optional): Valid values are json or xml. Defaults to "json".
         """
         self.base_url = f"{base_url}{self.base_url}"
-        self.format = response_format

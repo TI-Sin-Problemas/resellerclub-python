@@ -10,8 +10,7 @@ class ResellerClubAPI:
         self,
         auth_userid: str,
         api_key: str,
-        response_format: str = "json",
         test_mode: bool = True,
     ) -> None:
 
-        self.domains = DomainsClient(auth_userid, api_key, response_format, test_mode)
+        self.domains = DomainsClient(auth_userid, api_key, test_mode)
