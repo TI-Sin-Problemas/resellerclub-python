@@ -176,26 +176,23 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
 class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
     """.NAME 3rd level availability check test case"""
 
+    domains = ["domain.one", "domain.two"]
+
     def test_single_domain(self):
         """Test single domain case"""
-        domain_names = ["domain.one"]
-        response = self.api.domains.check_third_level_name_availability(domain_names)
-        test_against = {
-            "domain.one.name": {"classkey": "dotname", "status": "available"}
-        }
+        result = self.api.domains.check_third_level_name_availability(self.domains[0])
 
-        self.assertDictContainsSubset(response, test_against)
+        expected_domain = f"{self.domains[0]}.name"
+        self.assertListEqual([expected_domain], list(result.keys()))
+        self.assertIsInstance(result[expected_domain], Availability)
 
     def test_multiple_domain(self):
         """Test multiple domain case"""
-        domain_names = ["domain.one", "domain.two"]
-        response = self.api.domains.check_third_level_name_availability(domain_names)
-        test_against = {
-            "domain.two.name": {"classkey": "dotname", "status": "available"},
-            "domain.one.name": {"classkey": "dotname", "status": "available"},
-        }
+        result = self.api.domains.check_third_level_name_availability(self.domains)
 
-        self.assertDictContainsSubset(response, test_against)
+        expected_domains = [f"{domain}.name" for domain in self.domains]
+        self.assertListEqual(sorted(expected_domains), sorted(result.keys()))
+        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
 
 
 class TestSuggestNames(ResellerClubAPITestCase):
