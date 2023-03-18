@@ -1,5 +1,5 @@
-from typing import Dict, NamedTuple, Union
-from xml.etree import ElementTree
+"""Domains API Client"""
+from typing import Dict, List, NamedTuple
 
 from .base import BaseClient
 
@@ -9,6 +9,16 @@ class Availability(NamedTuple):
 
     status: str
     classkey: str = None
+
+
+class Suggestion(NamedTuple):
+    """Domain name suggestion"""
+
+    domain: str
+    status: str
+    in_ga: bool
+    score: float
+    spin: str
 
 
 class DomainsClient(BaseClient):
@@ -134,7 +144,7 @@ class DomainsClient(BaseClient):
         tld_only: str = None,
         exact_match: bool = None,
         adult: bool = None,
-    ) -> Union[dict, ElementTree.Element]:
+    ) -> List[Suggestion]:
         """Returns domain name suggestions for a user-specified keyword.
         https://manage.resellerclub.com/kb/answer/1085
 
@@ -147,7 +157,7 @@ class DomainsClient(BaseClient):
             explicit suggestions which contain words like "nude", "porn", etc. Defaults to None.
 
         Returns:
-            Union[dict, ElementTree.Element]: Dict or hash map containing availability status of suggested domain names for the keyword supplied.
+            List[Suggestion]: List of domain name suggestions.
         """
         params = {
             "keyword": keyword,
@@ -156,5 +166,13 @@ class DomainsClient(BaseClient):
             "adult": adult,
         }
         url = self.urls.domains.suggest_names()
+        data = self._get_data(url, params)
 
-        return self._get_data(url, params)
+        result = []
+        for domain, sug in data.items():
+            in_ga = bool(sug["in_ga"].lower() == "true")
+            score = float(sug["score"])
+            suggestion_params = [domain, sug["status"], in_ga, score, sug["spin"]]
+            result.append(Suggestion(*suggestion_params))
+
+        return result

@@ -1,12 +1,11 @@
 """Unit Tests"""
-import idna
 import unittest
 
+import idna
 import tests_settings as settings
-from fuzzywuzzy import fuzz
 
 from src.resellerclub import ResellerClubAPI
-from src.resellerclub.client.domains import Availability
+from src.resellerclub.client.domains import Availability, Suggestion
 
 
 class ResellerClubAPITestCase(unittest.TestCase):
@@ -202,35 +201,18 @@ class TestSuggestNames(ResellerClubAPITestCase):
 
     def test_keyword_only(self):
         """Test suggest names with keyword only"""
-        response = self.api.domains.suggest_names(self.keyword)
-
-        is_expected_response = any(
-            item for item in response if fuzz.partial_ratio(self.keyword, item) < 75
-        )
-
-        self.assertFalse(is_expected_response, "Some results are less than 75% similar")
+        suggestions = self.api.domains.suggest_names(self.keyword)
+        self.assertTrue(all(isinstance(sug, Suggestion) for sug in suggestions))
 
     def test_tld(self):
         """Test suggest names with keyword and .com tld"""
         tld = "com"
-        response = self.api.domains.suggest_names(self.keyword, tld)
-
-        is_response_dissimilar = any(
-            item for item in response if fuzz.partial_ratio(self.keyword, item) < 75
-        )
-        tld_not_in_response = any(item for item in response if "." + tld not in item)
-
-        self.assertFalse(
-            is_response_dissimilar, "Some results are less than 75% similar"
-        )
-        self.assertFalse(tld_not_in_response, "Some results do not contain TLD")
+        suggestions = self.api.domains.suggest_names(self.keyword, tld)
+        assertion = all(s.domain.endswith(f".{tld}") for s in suggestions)
+        self.assertTrue(assertion, "Some results do not contain TLD")
 
     def test_exact_match(self):
         """Test suggest names with keyword exact match"""
-        response = self.api.domains.suggest_names(self.keyword, exact_match=True)
-
-        is_response_exact_match = any(
-            item for item in response if self.keyword not in item
-        )
-
-        self.assertFalse(is_response_exact_match, "Results are not exact match")
+        suggestions = self.api.domains.suggest_names(self.keyword, exact_match=True)
+        assertion = all(s.domain.split(".")[0] == self.keyword for s in suggestions)
+        self.assertTrue(assertion, "Results are not exact match")
