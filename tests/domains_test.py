@@ -27,8 +27,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         result = self.api.domains.check_availability([domain], [tld])
 
         expected_domain = f"{domain}.{tld}"
-        self.assertIn(expected_domain, result.keys())
-        self.assertIsInstance(result[expected_domain], Availability)
+        self.assertIn(expected_domain, [availability.domain for availability in result])
 
     def test_single_domain_multiple_tlds(self):
         """Test single domain with multiple TLDs case"""
@@ -37,8 +36,8 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         result = self.api.domains.check_availability([domain], tlds)
 
         expected_domains = [f"{domain}.{tld}" for tld in tlds]
-        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
-        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
+        result_domains = [a.domain for a in result]
+        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
     def test_multiple_domains_single_tld(self):
         """Test multiple domains with single TLD case"""
@@ -47,8 +46,8 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         result = self.api.domains.check_availability(domains, [tld])
 
         expected_domains = [f"{domain}.{tld}" for domain in domains]
-        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
-        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
+        result_domains = [a.domain for a in result]
+        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
     def test_multiple_domains_multiple_tlds(self):
         """Test multiple domains with multiple TLDs case"""
@@ -57,8 +56,8 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         result = self.api.domains.check_availability(domains, tlds)
 
         expected_domains = [f"{domain}.{tld}" for domain in domains for tld in tlds]
-        self.assertListEqual(sorted(expected_domains), sorted(list(result.keys())))
-        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
+        result_domains = [a.domain for a in result]
+        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
 class TestIDNAvailability(ResellerClubAPITestCase):
@@ -78,8 +77,7 @@ class TestIDNAvailability(ResellerClubAPITestCase):
 
         punycode_domain = idna.encode(domain).decode()
         expected_domain = f"{punycode_domain}.{tld}"
-        self.assertIn(expected_domain, result.keys())
-        self.assertIsInstance(result[expected_domain], Availability)
+        self.assertIn(expected_domain, [a.domain for a in result])
 
     def test_multiple_domains(self):
         """Test multiple IDNs case"""
@@ -91,8 +89,8 @@ class TestIDNAvailability(ResellerClubAPITestCase):
 
         punycode_domains = [idna.encode(domain).decode() for domain in domains]
         expected_domains = [f"{domain}.{tld}" for domain in punycode_domains]
-        self.assertListEqual(sorted(expected_domains), sorted(result.keys()))
-        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
+        result_domains = [a.domain for a in result]
+        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
 class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
@@ -111,9 +109,9 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
 
         response = self.api.domains.check_premium_domain_availability(keyword, [tld])
 
-        domains = response.keys()
+        domains = [pd.domain for pd in response]
         is_keyword_in_domains = all(keyword in domain for domain in domains)
-        is_tld_in_domains = all(domain.endswith(tld) for domain in domains)
+        is_tld_in_domains = all(domain.endswith(f".{tld}") for domain in domains)
 
         self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
         self.assertTrue(is_tld_in_domains, "TLD is not in response")
@@ -125,9 +123,9 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
 
         response = self.api.domains.check_premium_domain_availability(keyword, tlds)
 
-        domains = response.keys()
-        is_keyword_in_domains = all(keyword in key for key in response)
-        is_tld_in_domains = all(any(d.endswith(tld) for d in domains) for tld in tlds)
+        domains = [pd.domain for pd in response]
+        is_keyword_in_domains = all(keyword in key for key in domains)
+        is_tld_in_domains = all(any(d.endswith(f".{t}") for d in domains) for t in tlds)
 
         self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
         self.assertTrue(is_tld_in_domains, "TLD is not in response")
@@ -137,16 +135,18 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         highest_price = self.highest_price
         params = [self.keyword, self.tlds[0], highest_price]
         response = self.api.domains.check_premium_domain_availability(*params)
+        prices = [pd.price for pd in response]
 
-        self.assertGreaterEqual(highest_price, max(response.values()))
+        self.assertGreaterEqual(highest_price, max(prices))
 
     def test_lowest_price(self):
         """Test lowest price case"""
         lowest_price = self.lowest_price
         params = [self.keyword, self.tlds[0], None, lowest_price]
         response = self.api.domains.check_premium_domain_availability(*params)
+        prices = [pd.price for pd in response]
 
-        self.assertGreaterEqual(min(response.values()), lowest_price)
+        self.assertGreaterEqual(min(prices), lowest_price)
 
     def test_highest_and_lowest_price(self):
         """Test highest and lowest price case"""
@@ -154,8 +154,8 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         highest_price = self.highest_price
         params = [self.keyword, self.tlds[0], highest_price, lowest_price]
         response = self.api.domains.check_premium_domain_availability(*params)
+        prices = [pd.price for pd in response]
 
-        prices = response.values()
         self.assertGreaterEqual(min(prices), lowest_price)
         self.assertGreaterEqual(highest_price, max(prices))
 
@@ -182,16 +182,16 @@ class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
         result = self.api.domains.check_third_level_name_availability(self.domains[0])
 
         expected_domain = f"{self.domains[0]}.name"
-        self.assertListEqual([expected_domain], list(result.keys()))
-        self.assertIsInstance(result[expected_domain], Availability)
+        result_domains = [a.domain for a in result]
+        self.assertListEqual([expected_domain], sorted(result_domains))
 
     def test_multiple_domain(self):
         """Test multiple domain case"""
         result = self.api.domains.check_third_level_name_availability(self.domains)
 
         expected_domains = [f"{domain}.name" for domain in self.domains]
-        self.assertListEqual(sorted(expected_domains), sorted(result.keys()))
-        self.assertTrue(all(isinstance(v, Availability) for v in result.values()))
+        result_domains = [a.domain for a in result]
+        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
 class TestSuggestNames(ResellerClubAPITestCase):

@@ -1,5 +1,5 @@
 """Domains API Client"""
-from typing import Dict, List, NamedTuple
+from typing import List, NamedTuple
 
 from .base import BaseClient
 
@@ -7,8 +7,16 @@ from .base import BaseClient
 class Availability(NamedTuple):
     """Domain name availability for TLDs"""
 
+    domain: str
     status: str
     classkey: str = None
+
+
+class PremiumDomain(NamedTuple):
+    """Premium Domain"""
+
+    domain: str
+    price: float
 
 
 class Suggestion(NamedTuple):
@@ -24,9 +32,7 @@ class Suggestion(NamedTuple):
 class DomainsClient(BaseClient):
     """Domains API Client. Methods to Search, Register or Renew domain names, etc."""
 
-    def check_availability(
-        self, domain_names: list, tlds: list
-    ) -> Dict[str, Availability]:
+    def check_availability(self, domain_names: list, tlds: list) -> List[Availability]:
         """Checks the availability of the specified domain name(s).
         https://manage.resellerclub.com/kb/answer/764
 
@@ -35,21 +41,18 @@ class DomainsClient(BaseClient):
             tlds (list): TLDs for which the domain name availability needs to be checkedW
 
         Returns:
-            Dict[str, Availability]: Returns a dict containing domain name availability status
-            for the requested TLDs
+            List[Availability]: Returns a list containing domain name availability status for the
+            requested TLDs
         """
         params = {"domain-name": domain_names, "tlds": tlds}
         url = self.urls.domains.check_availability()
         data = self._get_data(url, params)
 
-        return {
-            domain: Availability(**availability)
-            for domain, availability in data.items()
-        }
+        return [Availability(dn, **a) for dn, a in data.items() if not dn == "errors"]
 
     def check_idn_availability(
         self, domain_names: list, tld: str, idn_language_code: str
-    ) -> Dict[str, Availability]:
+    ) -> List[Availability]:
         """Checks the availability of the specified Internationalized Domain Name(s) (IDN)
         https://manage.resellerclub.com/kb/answer/1427
 
@@ -61,8 +64,8 @@ class DomainsClient(BaseClient):
             Domain Name, you need to provide the corresponding language code
 
         Returns:
-            Dict[str, Availability]: Returns a dict containing domain name availability status for
-            the requested TLDs
+            List[Availability]: List containing domain name availability status for the requested
+            TLDs
         """
         params = {
             "domain-name": domain_names,
@@ -72,10 +75,7 @@ class DomainsClient(BaseClient):
         url = self.urls.domains.check_idn_availability()
         data = self._get_data(url, params)
 
-        return {
-            domain: Availability(**availability)
-            for domain, availability in data.items()
-        }
+        return [Availability(dn, **availability) for dn, availability in data.items()]
 
     def check_premium_domain_availability(
         self,
@@ -84,7 +84,7 @@ class DomainsClient(BaseClient):
         highest_price: int = None,
         lowest_price: int = None,
         max_results: int = None,
-    ) -> Dict[str, float]:
+    ) -> List[PremiumDomain]:
         """Returns a list of Aftermarket Premium domain names based on the specified keyword.
         This method only returns names available on the secondary market, and not those premium
         names that are offered directly by any Registry for new registration.
@@ -101,7 +101,7 @@ class DomainsClient(BaseClient):
             max_results (int, optional): Number of results to be returned. Defaults to None.
 
         Returns:
-            Dict[str, float]: Dictionary of domain names and prices
+            List[PremiumDomain]: List of domain names and prices
         """
 
         params = {
@@ -114,11 +114,11 @@ class DomainsClient(BaseClient):
         url = self.urls.domains.check_premium_availability()
         data = self._get_data(url, params)
 
-        return {domain: float(price) for domain, price in data.items()}
+        return [PremiumDomain(domain, float(price)) for domain, price in data.items()]
 
     def check_third_level_name_availability(
         self, domain_names: list
-    ) -> Dict[str, Availability]:
+    ) -> List[Availability]:
         """Checks the availability of the specified 3rd level .NAME domain name(s).
         https://manage.resellerclub.com/kb/node/2931
 
@@ -126,17 +126,14 @@ class DomainsClient(BaseClient):
             domain_names (list): Domain name(s) that you need to check the availability for.
 
         Returns:
-            Dict[str, Availability]: Dictionary containing domain name availability status for the
-            requested TLDs.
+            List[Availability]: List containing domain name availability status for the requested
+            domain names
         """
         params = {"domain-name": domain_names, "tlds": "*.name"}
         url = self.urls.domains.check_third_level_name_availability()
         data = self._get_data(url, params)
 
-        return {
-            domain: Availability(**availability)
-            for domain, availability in data.items()
-        }
+        return [Availability(dn, **availability) for dn, availability in data.items()]
 
     def suggest_names(
         self,
