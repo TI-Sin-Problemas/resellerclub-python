@@ -1,5 +1,5 @@
 """Domains URL endpoints"""
-
+from typing import Literal
 
 from .base import BaseURLs
 
@@ -9,22 +9,35 @@ class DomainsURLs(BaseURLs):
 
     base_url = "domains/"
 
-    def check_availability(self):
-        """Domain availability check URL"""
-        return f"{self.base_url}available.json"
+    def get_availability_check_url(
+        self, domain_type: Literal["idn", "premium", "3rd_level_dotname"] = None
+    ) -> str:
+        """Returns URL for domain availability check
 
-    def check_idn_availability(self):
-        """Internationalized Domain Name availability check URL"""
-        return f"{self.base_url}idn-available.json"
+        Args:
+            domain_type: Type of domain to check.
+                "idn": Internationalized Domain Name availability check.
+                "premium": Premium Domain Availability check.
+                "3rd_level_dotname": 3rd level .NAME availability check.
+                None: Regular domain availability check.
+                Defaults to None.
 
-    def check_premium_availability(self):
-        """Premium domain availability check URL"""
-        return f"{self.base_url}premium/available.json"
+        Returns:
+            str: API endpoint URL
+        """
 
-    def check_third_level_name_availability(self):
-        """3rd level .NAME availability check URL"""
-        return f"{self.base_url}thirdlevelname/available.json"
+        url_map = {
+            "idn": f"{self.base_url}idn-available.json",
+            "premium": f"{self.base_url}premium/available.json",
+            "3rd_level_dotname": f"{self.base_url}thirdlevelname/available.json",
+        }
 
-    def suggest_names(self):
-        """Suggest Names URL"""
+        return url_map.get(domain_type, f"{self.base_url}available.json")
+
+    def get_name_suggestion_url(self) -> str:
+        """Returns URL for domain name suggestion
+
+        Returns:
+            str: API endpoint URL
+        """
         return f"{self.base_url}v5/suggest-names.json"
