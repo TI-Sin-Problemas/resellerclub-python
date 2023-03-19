@@ -3,9 +3,9 @@ import unittest
 
 import idna
 import tests_settings as settings
+from thefuzz import fuzz
 
 from src.resellerclub import ResellerClubAPI
-from src.resellerclub.client.domains import Availability, Suggestion
 
 
 class ResellerClubAPITestCase(unittest.TestCase):
@@ -202,7 +202,9 @@ class TestSuggestNames(ResellerClubAPITestCase):
     def test_keyword_only(self):
         """Test suggest names with keyword only"""
         suggestions = self.api.domains.suggest_names(self.keyword)
-        self.assertTrue(all(isinstance(sug, Suggestion) for sug in suggestions))
+        ratio_list = [fuzz.partial_ratio(s.domain, self.keyword) for s in suggestions]
+        failed_message = "Some results are less than 75% similar"
+        self.assertFalse(any(ratio < 75 for ratio in ratio_list), failed_message)
 
     def test_tld(self):
         """Test suggest names with keyword and .com tld"""
