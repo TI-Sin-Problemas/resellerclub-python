@@ -18,16 +18,6 @@ class BaseClient:
         self.api_key = api_key
         self.urls = URLs(test_mode)
 
-    def __add_auth(self, params: dict) -> dict:
-        """Adds auth data to request params
-
-        Returns:
-            dict: Dictionary to be used as params on request
-        """
-        auth_dict = {"auth-userid": self.auth_userid, "api-key": self.api_key}
-
-        return {**params, **auth_dict}
-
     def _get_data(self, url: str, params: dict = None) -> dict:
         """Get response from API
 
@@ -38,8 +28,8 @@ class BaseClient:
         Returns:
             dict: dict with response data
         """
-        full_params = self.__add_auth(params)
-        response = requests.get(url, full_params, timeout=120)
+        params.update({"auth-userid": self.auth_userid, "api-key": self.api_key})
+        response = requests.get(url, params, timeout=120)
 
         try:
             data = response.json()
