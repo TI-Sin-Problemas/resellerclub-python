@@ -5,16 +5,16 @@ import idna
 import tests_settings as settings
 from thefuzz import fuzz
 
-from src.resellerclub import ResellerClubAPI
+from src.resellerclub import ResellerClub
 
 
-class ResellerClubAPITestCase(unittest.TestCase):
+class ResellerClubTestCase(unittest.TestCase):
     """Base ResellerClub API Test Case"""
 
-    api = ResellerClubAPI(settings.RESELLER_ID, settings.API_KEY)
+    api = ResellerClub(settings.RESELLER_ID, settings.API_KEY)
 
 
-class TestDomainAvailability(ResellerClubAPITestCase):
+class TestDomainAvailability(ResellerClubTestCase):
     """Domain Availability Test Cases"""
 
     domains = ["github", "google"]
@@ -60,7 +60,7 @@ class TestDomainAvailability(ResellerClubAPITestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestIDNAvailability(ResellerClubAPITestCase):
+class TestIDNAvailability(ResellerClubTestCase):
     """IDN Availability Test Cases"""
 
     domains = ["ѯҋ111", "ѯҋ112"]
@@ -93,7 +93,7 @@ class TestIDNAvailability(ResellerClubAPITestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
+class TestPremiumDomainsAvailability(ResellerClubTestCase):
     """Premium domains availability check test case"""
 
     keyword = "domain"
@@ -172,7 +172,7 @@ class TestPremiumDomainsAvailability(ResellerClubAPITestCase):
         self.assertGreaterEqual(max_results, len(response))
 
 
-class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
+class TestThirdLvlNameAvailability(ResellerClubTestCase):
     """.NAME 3rd level availability check test case"""
 
     domains = ["domain.one", "domain.two"]
@@ -194,7 +194,7 @@ class TestThirdLvlNameAvailability(ResellerClubAPITestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestSuggestNames(ResellerClubAPITestCase):
+class TestSuggestNames(ResellerClubTestCase):
     """Suggest name test case"""
 
     keyword = "reseller"

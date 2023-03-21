@@ -1,3 +1,3 @@
-from .wrapper import ResellerClubAPI
+from .wrapper import ResellerClub
 
-__all__ = ["ResellerClubAPI"]
+__all__ = ["ResellerClub"]

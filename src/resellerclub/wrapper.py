@@ -3,7 +3,7 @@
 from .client.domains import DomainsClient
 
 
-class ResellerClubAPI:
+class ResellerClub:
     """ResellerClub API Client"""
 
     def __init__(
