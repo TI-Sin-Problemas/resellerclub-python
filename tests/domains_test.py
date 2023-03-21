@@ -1,17 +1,7 @@
-"""Unit Tests"""
-import unittest
-
+"""Domains Unit Tests"""
 import idna
-import tests_settings as settings
+from case import ResellerClubTestCase
 from thefuzz import fuzz
-
-from src.resellerclub import ResellerClub
-
-
-class ResellerClubTestCase(unittest.TestCase):
-    """Base ResellerClub API Test Case"""
-
-    api = ResellerClub(settings.RESELLER_ID, settings.API_KEY)
 
 
 class TestDomainAvailability(ResellerClubTestCase):
