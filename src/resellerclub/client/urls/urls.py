@@ -3,6 +3,7 @@
 
 from .base import BaseURLs
 from .domains import DomainsURLs
+from .customers import CustomersURLs
 
 
 class URLs(BaseURLs):
@@ -23,3 +24,4 @@ class URLs(BaseURLs):
 
         # Domains urls
         self.domains = DomainsURLs(self.base_url)
+        self.customers = CustomersURLs(self.base_url)

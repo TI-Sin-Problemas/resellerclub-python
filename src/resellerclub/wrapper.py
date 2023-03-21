@@ -1,5 +1,6 @@
 """ResellerClub API Client"""
 
+from .client.customers import CustomersClient
 from .client.domains import DomainsClient
 
 
@@ -14,3 +15,4 @@ class ResellerClub:
     ) -> None:
 
         self.domains = DomainsClient(auth_userid, api_key, test_mode)
+        self.customers = CustomersClient(auth_userid, api_key, test_mode)
