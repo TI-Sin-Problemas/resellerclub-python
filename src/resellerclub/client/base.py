@@ -14,9 +14,9 @@ class BaseClient:
         api_key: str,
         test_mode: bool = True,
     ) -> None:
-        self.auth_userid = auth_userid
-        self.api_key = api_key
-        self.urls = URLs(test_mode)
+        self._auth_userid = auth_userid
+        self._api_key = api_key
+        self._urls = URLs(test_mode)
 
     def _get_data(self, url: str, params: dict = None) -> dict:
         """Get response from API
@@ -28,7 +28,7 @@ class BaseClient:
         Returns:
             dict: dict with response data
         """
-        params.update({"auth-userid": self.auth_userid, "api-key": self.api_key})
+        params.update({"auth-userid": self._auth_userid, "api-key": self._api_key})
         response = requests.get(url, params, timeout=120)
 
         try:

@@ -45,7 +45,7 @@ class DomainsClient(BaseClient):
             requested TLDs
         """
         params = {"domain-name": domain_names, "tlds": tlds}
-        url = self.urls.domains.get_availability_check_url()
+        url = self._urls.domains.get_availability_check_url()
         data = self._get_data(url, params)
 
         return [Availability(dn, **a) for dn, a in data.items() if not dn == "errors"]
@@ -72,7 +72,7 @@ class DomainsClient(BaseClient):
             "tld": tld,
             "idnLanguageCode": idn_language_code,
         }
-        url = self.urls.domains.get_availability_check_url("idn")
+        url = self._urls.domains.get_availability_check_url("idn")
         data = self._get_data(url, params)
 
         return [Availability(dn, **availability) for dn, availability in data.items()]
@@ -111,7 +111,7 @@ class DomainsClient(BaseClient):
             "price-low": lowest_price,
             "no-of-results": max_results,
         }
-        url = self.urls.domains.get_availability_check_url("premium")
+        url = self._urls.domains.get_availability_check_url("premium")
         data = self._get_data(url, params)
 
         return [PremiumDomain(domain, float(price)) for domain, price in data.items()]
@@ -130,7 +130,7 @@ class DomainsClient(BaseClient):
             domain names
         """
         params = {"domain-name": domain_names, "tlds": "*.name"}
-        url = self.urls.domains.get_availability_check_url("3rd_level_dotname")
+        url = self._urls.domains.get_availability_check_url("3rd_level_dotname")
         data = self._get_data(url, params)
 
         return [Availability(dn, **availability) for dn, availability in data.items()]
@@ -162,7 +162,7 @@ class DomainsClient(BaseClient):
             "exact-match": exact_match,
             "adult": adult,
         }
-        url = self.urls.domains.get_name_suggestion_url()
+        url = self._urls.domains.get_name_suggestion_url()
         data = self._get_data(url, params)
 
         result = []
