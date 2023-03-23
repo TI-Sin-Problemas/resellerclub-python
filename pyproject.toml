@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "resellerclub-python"
+version = "0.0.1"
+authors = [{ name = "TI Sin Problemas", email = "pypi@tisinproblemas.com" }]
+description = "A client for ResellerClub HTTP API"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = ["requests>=2.28.2"]
+keywords = ["resellerclub", "api", "client"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/TI-Sin-Problemas/resellerclub-python"
+"Bug Tracker" = "https://github.com/TI-Sin-Problemas/resellerclub-python/issues"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/.github"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/resellerclub"]
