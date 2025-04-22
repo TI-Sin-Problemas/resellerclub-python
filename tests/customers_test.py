@@ -1,15 +1,29 @@
 """Customers Unit Tests"""
-from case import ResellerClubTestCase
+
+import pytest
+import requests
 
 
-class TestSearchCustomers(ResellerClubTestCase):
+class MockResponse:
+    @staticmethod
+    def get(*args, **kwargs):
+        """Get mock response from API"""
+        r = requests.Response()
+        r.encoding = "UTF-8"
+        r.status_code = 200
+        with open("tests/responses/customers.txt", "rb") as f:
+            r._content = f.read()
+        return r
+
+
+@pytest.mark.usefixtures("api_class")
+class TestSearchCustomers:
     """Test SearchCustomers"""
 
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
-        self.search_method = self.api.customers.search
-
-    def test_search_first_ten_customers(self):
+    def test_search_first_ten_customers(self, monkeypatch):
         """Test search first ten customers"""
-        customers = self.search_method(10, 1)
-        self.assertGreaterEqual(10, len(customers))
+        mock = MockResponse()
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        customers = self.api.customers.search(10, 1)
+        assert 10 >= len(customers)
