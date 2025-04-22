@@ -4,7 +4,9 @@ import pytest
 import requests
 
 
-class MockResponse:
+class MockRequests:
+    """Mock Requests class"""
+
     @staticmethod
     def get(*args, **kwargs):
         """Get mock response from API"""
@@ -22,7 +24,7 @@ class TestSearchCustomers:
 
     def test_search_first_ten_customers(self, monkeypatch):
         """Test search first ten customers"""
-        mock = MockResponse()
+        mock = MockRequests()
         monkeypatch.setattr(requests, "get", mock.get)
 
         customers = self.api.customers.search(10, 1)
