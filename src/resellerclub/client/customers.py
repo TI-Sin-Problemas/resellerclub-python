@@ -1,4 +1,5 @@
 """Customers API Client"""
+
 from datetime import datetime
 from typing import Iterator, List, Literal, NamedTuple
 
@@ -96,7 +97,7 @@ class CustomersClient(BaseClient):
         if creation_date_end:
             creation_date_end = creation_date_end.timestamp()
 
-        url = self._urls.customers.get_search_url()
+        url = self._urls.customers.search()
         params = {
             "no-of-records": records,
             "page-no": page,
