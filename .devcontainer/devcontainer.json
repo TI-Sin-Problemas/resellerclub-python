@@ -9,6 +9,16 @@
 		"ghcr.io/devcontainers-contrib/features/fish-apt-get:1": {},
 		"ghcr.io/devcontainers-contrib/features/starship:1": {},
 		"ghcr.io/joshuanianji/devcontainer-features/github-cli-persistence:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"tamasfe.even-better-toml",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"ms-python.pylint"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
