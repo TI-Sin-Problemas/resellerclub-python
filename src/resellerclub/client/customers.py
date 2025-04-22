@@ -97,7 +97,7 @@ class CustomersClient(BaseClient):
         if creation_date_end:
             creation_date_end = creation_date_end.timestamp()
 
-        url = self._urls.customers.search()
+        url = self._urls.customers.search
         params = {
             "no-of-records": records,
             "page-no": page,
