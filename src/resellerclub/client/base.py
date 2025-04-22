@@ -1,4 +1,5 @@
 """Base API classes"""
+
 import requests
 
 from ..exceptions import ResellerClubAPIException
@@ -18,6 +19,10 @@ class BaseClient:
         self._api_key = api_key
         self._urls = URLs(test_mode)
 
+    def _perform_get(self, url: str, params: dict = None) -> requests.Response:
+        params.update({"auth-userid": self._auth_userid, "api-key": self._api_key})
+        return requests.get(url, params, timeout=120)
+
     def _get_data(self, url: str, params: dict = None) -> dict:
         """Get response from API
 
@@ -28,8 +33,7 @@ class BaseClient:
         Returns:
             dict: dict with response data
         """
-        params.update({"auth-userid": self._auth_userid, "api-key": self._api_key})
-        response = requests.get(url, params, timeout=120)
+        response = self._perform_get(url, params)
 
         try:
             data = response.json()
