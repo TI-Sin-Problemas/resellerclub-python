@@ -3,25 +3,8 @@
 from datetime import datetime
 from typing import Iterator, List, Literal, NamedTuple
 
+from ..resources.customer import Customer
 from .base import BaseClient
-
-
-class Customer(NamedTuple):
-    """Customer object"""
-
-    id: str
-    username: str
-    reseller_id: str
-    name: str
-    company: str
-    city: str
-    state: str
-    country: str
-    status: str
-    total_receipts: float
-    phone: str
-    phone_country_code: str
-    website_count: int
 
 
 class SearchResponse(NamedTuple):
@@ -209,27 +192,10 @@ class CustomersClient(BaseClient):
         }
         data = self._get(url, params)
 
-        recsonpage = int(data.get("recsonpage"))
-        recsindb = int(data.get("recsindb"))
+        recsonpage = int(data.pop("recsonpage"))
+        recsindb = int(data.pop("recsindb"))
         customers = []
-        for key, value in data.items():
-            if key.isdigit():
-                customer_data = {k.split(".")[1]: v for k, v in value.items()}
-                customer_params = {
-                    "id": customer_data["customerid"],
-                    "username": customer_data["username"],
-                    "reseller_id": customer_data["resellerid"],
-                    "name": customer_data["name"],
-                    "company": customer_data["company"],
-                    "city": customer_data["city"],
-                    "state": customer_data.get("state"),
-                    "country": customer_data["country"],
-                    "status": customer_data["customerstatus"],
-                    "total_receipts": float(customer_data["totalreceipts"]),
-                    "phone": customer_data["telno"],
-                    "phone_country_code": customer_data["telnocc"],
-                    "website_count": int(customer_data["websitecount"]),
-                }
-                customers.append(Customer(**customer_params))
+        for value in data.values():
+            customers.append(Customer.from_api(value))
 
         return SearchResponse(recsonpage, recsindb, customers)
