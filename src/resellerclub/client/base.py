@@ -19,21 +19,25 @@ class BaseClient:
         self._api_key = api_key
         self._urls = URLs(test_mode)
 
-    def _perform_get(self, url: str, params: dict = None) -> requests.Response:
-        params.update({"auth-userid": self._auth_userid, "api-key": self._api_key})
-        return requests.get(url, params, timeout=120)
+    def _build_params(self, **kwargs) -> dict:
+        params = {"auth-userid": self._auth_userid, "api-key": self._api_key}
+        params.update(kwargs)
+        return params
 
-    def _get_data(self, url: str, params: dict = None) -> dict:
-        """Get response from API
+    def _perform_request(self, method: str, url: str, params: dict) -> dict:
+        """Perform a request to the API.
 
         Args:
-            url (str): URL to request data from
-            params (dict, optional): Parameters of the request. Defaults to None.
+            method (str): Request method. Valid values are get, post, put, delete.
+            url (str): URL to request.
+            params (dict): Parameters to send in the request.
 
         Returns:
             dict: dict with response data
         """
-        response = self._perform_get(url, params)
+        params = self._build_params(**params)
+        func = getattr(requests, method)
+        response = func(url, params, timeout=120)
 
         try:
             data = response.json()
@@ -44,3 +48,27 @@ class BaseClient:
             raise ResellerClubAPIException(data["message"])
 
         return data
+
+    def _get(self, url: str, params: dict) -> requests.Response:
+        """Perform a GET request to the API
+
+        Args:
+            url (str): URL to request data from
+            params (dict, optional): Parameters to send in the query string.
+
+        Returns:
+            dict: dict with response data
+        """
+        return self._perform_request("get", url, params)
+
+    def _post(self, url: str, params: dict) -> requests.Response:
+        """Perform a POST request to the API
+
+        Args:
+            url (str): URL to send the request to
+            params (dict, optional): Parameters to send in the request body.
+
+        Returns:
+            dict: dict with response data
+        """
+        return self._perform_request("post", url, params)

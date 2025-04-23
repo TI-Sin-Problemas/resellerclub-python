@@ -3,28 +3,59 @@
 import pytest
 import requests
 
+from src.resellerclub import ResellerClub
+
 
 class MockRequests:
     """Mock Requests class"""
 
-    @staticmethod
-    def get(*args, **kwargs):
-        """Get mock response from API"""
+    def __init__(self, response_content: bytes):
         r = requests.Response()
         r.encoding = "UTF-8"
         r.status_code = 200
-        with open("tests/responses/customers.txt", "rb") as f:
-            r._content = f.read()
-        return r
+        r._content = response_content
+        self.response = r
+
+    def get(self, *args, **kwargs):
+        """Get mock response from API"""
+        return self.response
+
+    def post(self, *args, **kwargs):
+        return self.response
 
 
 @pytest.mark.usefixtures("api_class")
 class TestSearchCustomers:
     """Test SearchCustomers"""
 
+    api: ResellerClub
+
+    def test_sign_up_customer(self, monkeypatch):
+        """Test sign up a new customer"""
+        mock = MockRequests(response_content=b"30930235")
+        monkeypatch.setattr(requests, "post", mock.post)
+        customer_id = self.api.customers.sign_up(
+            username="email@email.com",
+            password="password9",
+            name="Customer Name",
+            company="Customer Company",
+            address="Customer Address",
+            city="City",
+            state="State",
+            country="US",
+            zip_code="12345",
+            phone_country_code="1",
+            phone="1234567890",
+            language_code="en",
+        )
+
+        assert isinstance(customer_id, int)
+
     def test_search_first_ten_customers(self, monkeypatch):
         """Test search first ten customers"""
-        mock = MockRequests()
+        with open("tests/responses/customers.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
 
         customers = self.api.customers.search(10, 1)
