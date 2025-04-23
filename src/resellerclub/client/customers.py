@@ -114,7 +114,7 @@ class CustomersClient(BaseClient):
             "total-receipt-start": total_receipt_start,
             "total-receipt-end": total_receipt_end,
         }
-        data = self.get(url, params)
+        data = self._get(url, params)
 
         recsonpage = int(data.get("recsonpage"))
         recsindb = int(data.get("recsindb"))
