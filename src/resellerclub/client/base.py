@@ -24,12 +24,30 @@ class BaseClient:
         params.update(kwargs)
         return params
 
-    def _perform_request(
-        self, method: str, url: str, params: dict
-    ) -> requests.Response:
+    def _perform_request(self, method: str, url: str, params: dict) -> dict:
+        """Perform a request to the API.
+
+        Args:
+            method (str): Request method. Valid values are get, post, put, delete.
+            url (str): URL to request.
+            params (dict): Parameters to send in the request.
+
+        Returns:
+            dict: dict with response data
+        """
         params = self._build_params(**params)
         func = getattr(requests, method)
-        return func(url, params, timeout=120)
+        response = func(url, params, timeout=120)
+
+        try:
+            data = response.json()
+        except requests.JSONDecodeError:
+            response.raise_for_status()
+
+        if not response.ok:
+            raise ResellerClubAPIException(data["message"])
+
+        return data
 
     def get(self, url: str, params: dict) -> requests.Response:
         """Perform a GET request to the API
@@ -39,7 +57,7 @@ class BaseClient:
             params (dict, optional): Parameters to send in the query string.
 
         Returns:
-            requests.Response: Response from the API
+            dict: dict with response data
         """
         return self._perform_request("get", url, params)
 
@@ -51,28 +69,6 @@ class BaseClient:
             params (dict, optional): Parameters to send in the request body.
 
         Returns:
-            requests.Response: Response from the API
-        """
-        return self._perform_request("post", url, params)
-
-    def _get_data(self, url: str, params) -> dict:
-        """Get response from API
-
-        Args:
-            url (str): URL to request data from
-            params (dict, optional): Parameters of the request. Defaults to None.
-
-        Returns:
             dict: dict with response data
         """
-        response = self.get(url, params)
-
-        try:
-            data = response.json()
-        except requests.JSONDecodeError:
-            response.raise_for_status()
-
-        if not response.ok:
-            raise ResellerClubAPIException(data["message"])
-
-        return data
+        return self._perform_request("post", url, params)

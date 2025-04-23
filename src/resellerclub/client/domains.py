@@ -1,4 +1,5 @@
 """Domains API Client"""
+
 from typing import List, NamedTuple
 
 from .base import BaseClient
@@ -46,7 +47,7 @@ class DomainsClient(BaseClient):
         """
         params = {"domain-name": domain_names, "tlds": tlds}
         url = self._urls.domains.get_availability_check_url()
-        data = self._get_data(url, params)
+        data = self.get(url, params)
 
         return [Availability(dn, **a) for dn, a in data.items() if not dn == "errors"]
 
@@ -73,7 +74,7 @@ class DomainsClient(BaseClient):
             "idnLanguageCode": idn_language_code,
         }
         url = self._urls.domains.get_availability_check_url("idn")
-        data = self._get_data(url, params)
+        data = self.get(url, params)
 
         return [Availability(dn, **availability) for dn, availability in data.items()]
 
@@ -112,7 +113,7 @@ class DomainsClient(BaseClient):
             "no-of-results": max_results,
         }
         url = self._urls.domains.get_availability_check_url("premium")
-        data = self._get_data(url, params)
+        data = self.get(url, params)
 
         return [PremiumDomain(domain, float(price)) for domain, price in data.items()]
 
@@ -131,7 +132,7 @@ class DomainsClient(BaseClient):
         """
         params = {"domain-name": domain_names, "tlds": "*.name"}
         url = self._urls.domains.get_availability_check_url("3rd_level_dotname")
-        data = self._get_data(url, params)
+        data = self.get(url, params)
 
         return [Availability(dn, **availability) for dn, availability in data.items()]
 
@@ -163,7 +164,7 @@ class DomainsClient(BaseClient):
             "adult": adult,
         }
         url = self._urls.domains.get_name_suggestion_url()
-        data = self._get_data(url, params)
+        data = self.get(url, params)
 
         result = []
         for domain, sug in data.items():
