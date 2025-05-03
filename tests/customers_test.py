@@ -69,4 +69,4 @@ class TestSearchCustomers:
         monkeypatch.setattr(requests, "get", mock.get)
 
         customers = self.api.customers.search(10, 1)
-        assert 10 >= len(customers)
+        assert all(isinstance(c, customer_models.Customer) for c in customers)
