@@ -169,7 +169,7 @@ class Customer(BaseCustomer):
         self.website_count = website_count
 
     @classmethod
-    def from_api(cls, data: dict):
+    def from_search(cls, data: dict):
         """
         Create a Customer object from a dictionary returned by the ResellerClub API.
 

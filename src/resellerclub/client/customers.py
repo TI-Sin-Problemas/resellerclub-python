@@ -145,6 +145,6 @@ class CustomersClient(BaseClient):
         recsindb = int(data.pop("recsindb"))
         customers = []
         for value in data.values():
-            customers.append(Customer.from_api(value))
+            customers.append(Customer.from_search(value))
 
         return SearchResponse(recsonpage, recsindb, customers)
