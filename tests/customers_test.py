@@ -33,7 +33,9 @@ class TestSearchCustomers:
 
     def test_sign_up_customer(self, monkeypatch):
         """Test sign up a new customer"""
-        mock = MockRequests(response_content=b"30930235")
+        with open("tests/responses/sign_up.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "post", mock.post)
 
         new_customer = customer.NewCustomer(
