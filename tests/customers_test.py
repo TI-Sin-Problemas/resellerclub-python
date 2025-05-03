@@ -43,7 +43,7 @@ class TestSearchCustomers:
             password="password9",
             name="Customer Name",
             company="Customer Company",
-            address=customer_models.NewCustomerAddress(
+            address=customer_models.Address(
                 line1="Customer Address",
                 city="City",
                 state="State",

@@ -16,7 +16,7 @@ class BaseCustomer:
     _id: t.Optional[str] = None
 
 
-class NewCustomerAddress(t.NamedTuple):
+class Address(t.NamedTuple):
     """
     Address constructor.
 
@@ -77,7 +77,7 @@ class NewCustomer(BaseCustomer):
         password: str,
         name: str,
         company: str,
-        address: NewCustomerAddress,
+        address: Address,
         phones: NewCustomerPhones,
         language_code: str,
         sms_consent: bool = None,
