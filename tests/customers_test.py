@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from src.resellerclub import ResellerClub
-from src.resellerclub.models import customer
+from src.resellerclub.models import customer as customer_models
 
 
 class MockRequests:
@@ -38,19 +38,19 @@ class TestSearchCustomers:
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "post", mock.post)
 
-        new_customer = customer.NewCustomer(
+        new_customer = customer_models.NewCustomer(
             username="email@email.com",
             password="password9",
             name="Customer Name",
             company="Customer Company",
-            address=customer.NewCustomerAddress(
+            address=customer_models.NewCustomerAddress(
                 line1="Customer Address",
                 city="City",
                 state="State",
                 country="US",
                 zip_code="12345",
             ),
-            phones=customer.NewCustomerPhones(
+            phones=customer_models.NewCustomerPhones(
                 phone_country_code="1",
                 phone="1234567890",
             ),
