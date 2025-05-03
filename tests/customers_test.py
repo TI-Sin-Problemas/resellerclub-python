@@ -4,6 +4,7 @@ import pytest
 import requests
 
 from src.resellerclub import ResellerClub
+from src.resellerclub.models import customer
 
 
 class MockRequests:
@@ -34,20 +35,27 @@ class TestSearchCustomers:
         """Test sign up a new customer"""
         mock = MockRequests(response_content=b"30930235")
         monkeypatch.setattr(requests, "post", mock.post)
-        customer_id = self.api.customers.sign_up(
+
+        new_customer = customer.NewCustomer(
             username="email@email.com",
             password="password9",
             name="Customer Name",
             company="Customer Company",
-            address="Customer Address",
-            city="City",
-            state="State",
-            country="US",
-            zip_code="12345",
-            phone_country_code="1",
-            phone="1234567890",
+            address=customer.NewCustomerAddress(
+                line1="Customer Address",
+                city="City",
+                state="State",
+                country="US",
+                zip_code="12345",
+            ),
+            phones=customer.NewCustomerPhones(
+                phone_country_code="1",
+                phone="1234567890",
+            ),
             language_code="en",
         )
+
+        customer_id = self.api.customers.sign_up(new_customer)
 
         assert isinstance(customer_id, int)
 
