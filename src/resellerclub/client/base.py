@@ -49,7 +49,7 @@ class BaseClient:
 
         return data
 
-    def _get(self, url: str, params: dict) -> requests.Response:
+    def _get(self, url: str, params: dict) -> dict:
         """Perform a GET request to the API
 
         Args:
@@ -61,7 +61,7 @@ class BaseClient:
         """
         return self._perform_request("get", url, params)
 
-    def _post(self, url: str, params: dict) -> requests.Response:
+    def _post(self, url: str, params: dict) -> dict:
         """Perform a POST request to the API
 
         Args:
