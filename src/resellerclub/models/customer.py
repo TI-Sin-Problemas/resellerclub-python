@@ -1,19 +1,19 @@
 import typing as t
+from dataclasses import dataclass
 
 
+@dataclass
 class BaseCustomer:
+    """
+    Base class for Customer objects.
 
-    def __init__(
-        self,
-        username: str,
-        name: str,
-        company: str,
-        _id: str = None,
-    ):
-        self.id = _id
-        self.username = username
-        self.name = name
-        self.company = company
+    Contains the common fields for customer objects.
+    """
+
+    username: str
+    name: str
+    company: str
+    _id: t.Optional[str] = None
 
 
 class NewCustomerAddress(t.NamedTuple):
