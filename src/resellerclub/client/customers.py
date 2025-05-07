@@ -82,6 +82,21 @@ class CustomersClient(BaseClient):
         data = self._get(url, params)
         return Customer.from_details(data)
 
+    def get_by_id(self, customer_id: int) -> Customer:
+        """
+        Retrieves customer details by ID.
+
+        Args:
+        customer_id (int): The ID of the customer.
+
+        Returns:
+            Customer: A Customer object with the details of the specified customer.
+        """
+        url = self._urls.customers.details_by_id
+        params = {"customer-id": customer_id}
+        data = self._get(url, params)
+        return Customer.from_details(data)
+
     def search(
         self,
         records: int,
