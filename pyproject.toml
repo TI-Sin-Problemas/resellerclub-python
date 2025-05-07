@@ -26,5 +26,11 @@ classifiers = [
 Issues = "https://github.com/TI-Sin-Problemas/resellerclub-python/issues"
 Source = "https://github.com/TI-Sin-Problemas/resellerclub-python"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/resellerclub"]
+
 [tool.hatch.version]
-path = "resellerclub_python/__init__.py"
+path = "src/resellerclub/__about__.py"
+
+[project.optional-dependencies]
+dev = ["black", "isort", "pylint", "pytest", "pytest-cov", "pytest-mock"]
