@@ -115,6 +115,21 @@ class NewCustomer(BaseCustomer):
         self.marketing_consent = marketing_consent
 
 
+class TwoFactorAuth(t.NamedTuple):
+    """
+    TwoFactorAuth constructor.
+
+    Args:
+        is_sms_enabled (bool): SMS 2FA enabled
+        is_google_enabled (bool): Google Authenticator enabled
+        is_2fa_enabled (bool): 2FA enabled
+    """
+
+    is_sms_enabled: bool
+    is_google_enabled: bool
+    is_2fa_enabled: bool
+
+
 class Customer(BaseCustomer):
     """
     Represents a customer object.
