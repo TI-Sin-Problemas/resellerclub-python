@@ -2,20 +2,6 @@ import typing as t
 from dataclasses import dataclass
 
 
-@dataclass
-class BaseCustomer:
-    """
-    Base class for Customer objects.
-
-    Contains the common fields for customer objects.
-    """
-
-    username: str
-    name: str
-    company: str
-    _id: t.Optional[str] = None
-
-
 class Address(t.NamedTuple):
     """
     Address constructor.
@@ -41,6 +27,21 @@ class Address(t.NamedTuple):
     other_state: str = None
     line2: str = None
     line3: str = None
+
+
+@dataclass
+class BaseCustomer:
+    """
+    Base class for Customer objects.
+
+    Contains the common fields for customer objects.
+    """
+
+    username: str
+    name: str
+    company: str
+    address: Address
+    _id: t.Optional[str] = None
 
 
 class NewCustomerPhones(t.NamedTuple):
@@ -104,9 +105,8 @@ class NewCustomer(BaseCustomer):
             marketing_consent (bool, optional): In case of EEA (European Economic Area) countries
                 capture consent to receive marketing emails
         """
-        super().__init__(username=username, name=name, company=company)
+        super().__init__(username=username, name=name, company=company, address=address)
         self.password = password
-        self.address = address
         self.phones = phones
         self.language_code = language_code
         self.sms_consent = sms_consent
@@ -123,14 +123,11 @@ class Customer(BaseCustomer):
         username (str): Username for the Customer Account. Username should be an email address.
         name (str): Name of the Customer
         company (str): Name of the Customer's company.
-        city (str): City.
-        state (str): State. In case the State information is not available, you need to pass the
-            value for this parameter as Not Applicable.
+        address (Address): Address of the Customer.
         password (str): Password for the Customer Account.
         id (str): The unique identifier of the customer.
         reseller_id (str): Reseller Id of the Parent Reseller.
         state (str): The state of the customer.
-        country (str): The country of the customer.
         status (str): The status of the customer (e.g. "Active", "Suspended", etc.).
         total_receipts (float): The total amount of receipts for the customer.
         phone (str): The phone number of the customer.
@@ -148,20 +145,17 @@ class Customer(BaseCustomer):
         reseller_id: str,
         name: str,
         company: str,
-        city: str,
-        state: str,
-        country: str,
+        address: Address,
         total_receipts: float,
         phone: str,
         phone_country_code: str,
         status: str,
         website_count: int,
     ):
-        super().__init__(_id=_id, username=username, name=name, company=company)
+        super().__init__(
+            _id=_id, username=username, name=name, company=company, address=address
+        )
         self.reseller_id = reseller_id
-        self.city = city
-        self.state = state
-        self.country = country
         self.status = status
         self.total_receipts = total_receipts
         self.phone = phone
@@ -180,15 +174,21 @@ class Customer(BaseCustomer):
             Customer: A Customer object.
         """
         customer_data = {k.split(".")[1]: v for k, v in data.items()}
+        address = Address(
+            line1=None,
+            city=customer_data["city"],
+            state=None,
+            country=customer_data["country"],
+            zip_code=None,
+            other_state=None,
+        )
         return cls(
             _id=customer_data["customerid"],
             username=customer_data["username"],
             reseller_id=customer_data["resellerid"],
             name=customer_data["name"],
             company=customer_data["company"],
-            city=customer_data["city"],
-            state=customer_data.get("state"),
-            country=customer_data["country"],
+            address=address,
             status=customer_data["customerstatus"],
             total_receipts=float(customer_data["totalreceipts"]),
             phone=customer_data["telno"],

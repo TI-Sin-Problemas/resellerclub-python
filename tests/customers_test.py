@@ -70,3 +70,5 @@ class TestSearchCustomers:
 
         customers = self.api.customers.search(10, 1)
         assert all(isinstance(c, customer_models.Customer) for c in customers)
+        assert all(isinstance(c.address, customer_models.Address) for c in customers)
+
