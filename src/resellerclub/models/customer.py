@@ -46,6 +46,11 @@ class BaseCustomer:
     address: Address
     _id: t.Optional[str] = None
 
+    @property
+    def id(self):
+        """Unique identifier of the customer."""
+        return self._id
+
 
 class NewCustomerPhones(t.NamedTuple):
     """
