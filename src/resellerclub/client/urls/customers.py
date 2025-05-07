@@ -17,3 +17,8 @@ class CustomersURLs(BaseURLs):
     def search(self) -> str:
         """Search endpoint"""
         return f"{self.base_url}/search.json"
+
+    @property
+    def details_by_username(self) -> str:
+        """Endpoint to get customer details by username"""
+        return f"{self.base_url}/details.json"

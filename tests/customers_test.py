@@ -4,6 +4,7 @@ import pytest
 import requests
 
 from src.resellerclub import ResellerClub
+from src.resellerclub.models import customer as customer_models
 
 
 class MockRequests:
@@ -32,22 +33,31 @@ class TestSearchCustomers:
 
     def test_sign_up_customer(self, monkeypatch):
         """Test sign up a new customer"""
-        mock = MockRequests(response_content=b"30930235")
+        with open("tests/responses/sign_up.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "post", mock.post)
-        customer_id = self.api.customers.sign_up(
+
+        new_customer = customer_models.NewCustomer(
             username="email@email.com",
             password="password9",
             name="Customer Name",
             company="Customer Company",
-            address="Customer Address",
-            city="City",
-            state="State",
-            country="US",
-            zip_code="12345",
-            phone_country_code="1",
-            phone="1234567890",
+            address=customer_models.Address(
+                line1="Customer Address",
+                city="City",
+                state="State",
+                country="US",
+                zip_code="12345",
+            ),
+            phones=customer_models.NewCustomerPhones(
+                phone_country_code="1",
+                phone="1234567890",
+            ),
             language_code="en",
         )
+
+        customer_id = self.api.customers.sign_up(new_customer)
 
         assert isinstance(customer_id, int)
 
@@ -59,4 +69,16 @@ class TestSearchCustomers:
         monkeypatch.setattr(requests, "get", mock.get)
 
         customers = self.api.customers.search(10, 1)
-        assert 10 >= len(customers)
+        assert all(isinstance(c, customer_models.Customer) for c in customers)
+        assert all(isinstance(c.address, customer_models.Address) for c in customers)
+
+    def test_get_customer_by_username(self, monkeypatch):
+        """Test get customer by username"""
+        with open("tests/responses/customer_details.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        customer = self.api.customers.get_by_username("email@email.com")
+        assert isinstance(customer, customer_models.Customer)
+        assert isinstance(customer.address, customer_models.Address)
