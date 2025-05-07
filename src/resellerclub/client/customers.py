@@ -66,6 +66,22 @@ class CustomersClient(BaseClient):
         }
         return self._post(url, params)
 
+    def get_by_username(self, username: str) -> Customer:
+        """
+        Retrieves customer details by username.
+
+        Args:
+        username (str): The username of the customer.
+
+        Returns:
+            Customer: A Customer object with the details of the specified customer.
+        """
+
+        url = self._urls.customers.details_by_username
+        params = {"username": username}
+        data = self._get(url, params)
+        return Customer.from_details(data)
+
     def search(
         self,
         records: int,
