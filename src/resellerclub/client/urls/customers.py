@@ -22,3 +22,8 @@ class CustomersURLs(BaseURLs):
     def details_by_username(self) -> str:
         """Endpoint to get customer details by username"""
         return f"{self.base_url}/details.json"
+
+    @property
+    def details_by_id(self) -> str:
+        """Endpoint to get customer details by ID"""
+        return f"{self.base_url}/details-by-id.json"

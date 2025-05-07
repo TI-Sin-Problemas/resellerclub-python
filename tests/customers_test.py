@@ -82,3 +82,14 @@ class TestSearchCustomers:
         customer = self.api.customers.get_by_username("email@email.com")
         assert isinstance(customer, customer_models.Customer)
         assert isinstance(customer.address, customer_models.Address)
+
+    def test_get_customer_by_id(self, monkeypatch):
+        """Test get customer by ID"""
+        with open("tests/responses/customer_details.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        customer = self.api.customers.get_by_id(30930235)
+        assert isinstance(customer, customer_models.Customer)
+        assert isinstance(customer.address, customer_models.Address)
