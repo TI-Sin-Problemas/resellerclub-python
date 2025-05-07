@@ -1,5 +1,8 @@
+"""Customer models"""
+
 import typing as t
 from dataclasses import dataclass
+from datetime import datetime
 
 
 class Address(t.NamedTuple):
@@ -228,4 +231,50 @@ class Customer(BaseCustomer):
             phone=customer_data["telno"],
             phone_country_code=customer_data["telnocc"],
             website_count=int(customer_data["websitecount"]),
+        )
+
+    @classmethod
+    def from_details(cls, data: dict):
+        """Create a Customer object from a dictionary returned by the ResellerClub API details
+        endpoint.
+
+        Args:
+            data: A dictionary as returned by the ResellerClub API.
+
+        Returns:
+            Customer: A Customer object.
+        """
+        address = Address(
+            line1=data["address1"],
+            city=data["city"],
+            state=data["state"],
+            country=data["country"],
+            zip_code=data["zip"],
+            other_state=data["other_state"],
+            line2=data.get("address2"),
+            line3=data.get("address3"),
+        )
+        two_factor_auth = TwoFactorAuth(
+            is_sms_enabled=bool(data["twofactorsmsauth_enabled"]),
+            is_google_enabled=bool(data["twofactorgoogleauth_enabled"]),
+            is_2fa_enabled=bool(data["twofactorauth_enabled"]),
+        )
+        return cls(
+            _id=data["customerid"],
+            username=data["username"],
+            reseller_id=data["resellerid"],
+            name=data["name"],
+            company=data["company"],
+            address=address,
+            total_receipts=float(data["totalreceipts"]),
+            phone=data["telno"],
+            phone_country_code=data["telnocc"],
+            status=data["customerstatus"],
+            language_preference=data["langpref"],
+            two_factor_auth=two_factor_auth,
+            pin=data["pin"],
+            is_password_expired=bool(data["ispasswdexpired"]),
+            user_email=data["useremail"],
+            creation_date=datetime.fromtimestamp(int(data["creationdt"])),
+            sales_contact_id=data["salescontactid"],
         )
