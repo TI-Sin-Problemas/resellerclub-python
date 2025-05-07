@@ -72,3 +72,13 @@ class TestSearchCustomers:
         assert all(isinstance(c, customer_models.Customer) for c in customers)
         assert all(isinstance(c.address, customer_models.Address) for c in customers)
 
+    def test_get_customer_by_username(self, monkeypatch):
+        """Test get customer by username"""
+        with open("tests/responses/customer_details.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        customer = self.api.customers.get_by_username("email@email.com")
+        assert isinstance(customer, customer_models.Customer)
+        assert isinstance(customer.address, customer_models.Address)
