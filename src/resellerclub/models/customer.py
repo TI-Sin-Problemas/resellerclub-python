@@ -135,19 +135,24 @@ class Customer(BaseCustomer):
     Represents a customer object.
 
     Args:
+        _id (str): The unique identifier of the customer.
         username (str): Username for the Customer Account. Username should be an email address.
+        reseller_id (str): Reseller Id of the Parent Reseller.
         name (str): Name of the Customer
         company (str): Name of the Customer's company.
         address (Address): Address of the Customer.
-        password (str): Password for the Customer Account.
-        id (str): The unique identifier of the customer.
-        reseller_id (str): Reseller Id of the Parent Reseller.
-        state (str): The state of the customer.
-        status (str): The status of the customer (e.g. "Active", "Suspended", etc.).
         total_receipts (float): The total amount of receipts for the customer.
         phone (str): The phone number of the customer.
         phone_country_code (str): The country code of the customer's phone number.
+        status (str): The status of the customer (e.g. "Active", "Suspended", etc.).
         website_count (int): The number of websites associated with the customer.
+        language_preference (str): The language preference of the customer.
+        two_factor_auth (TwoFactorAuth): The two-factor authentication status of the customer.
+        pin (str): The Personal Identification Number of the customer.
+        is_password_expired (bool): Whether the customer's password has expired.
+        user_email (str): The email address of the customer.
+        creation_date (datetime): The creation date of the customer.
+        sales_contact_id (str): The ID of the sales contact associated with the customer.
 
     Returns:
         Customer: A Customer object.
@@ -165,7 +170,14 @@ class Customer(BaseCustomer):
         phone: str,
         phone_country_code: str,
         status: str,
-        website_count: int,
+        website_count: int = None,
+        language_preference: str = None,
+        two_factor_auth: TwoFactorAuth = None,
+        pin: str = None,
+        is_password_expired: bool = None,
+        user_email: str = None,
+        creation_date: datetime = None,
+        sales_contact_id: str = None,
     ):
         super().__init__(
             _id=_id, username=username, name=name, company=company, address=address
@@ -176,11 +188,18 @@ class Customer(BaseCustomer):
         self.phone = phone
         self.phone_country_code = phone_country_code
         self.website_count = website_count
+        self.language_preference = language_preference
+        self.two_factor_auth = two_factor_auth
+        self.pin = pin
+        self.is_password_expired = is_password_expired
+        self.user_email = user_email
+        self.creation_date = creation_date
+        self.sales_contact_id = sales_contact_id
 
     @classmethod
     def from_search(cls, data: dict):
         """
-        Create a Customer object from a dictionary returned by the ResellerClub API.
+        Create a Customer object from a dictionary returned by the ResellerClub API search endpoint.
 
         Args:
             data: A dictionary as returned by the ResellerClub API.
