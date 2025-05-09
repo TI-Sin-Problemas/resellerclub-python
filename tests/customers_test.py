@@ -71,6 +71,9 @@ class TestSearchCustomers:
         customers = self.api.customers.search(10, 1)
         assert all(isinstance(c, customer_models.Customer) for c in customers)
         assert all(isinstance(c.address, customer_models.Address) for c in customers)
+        assert all(
+            isinstance(c.phones, customer_models.CustomerPhones) for c in customers
+        )
 
     def test_get_customer_by_username(self, monkeypatch):
         """Test get customer by username"""
@@ -82,6 +85,7 @@ class TestSearchCustomers:
         customer = self.api.customers.get_by_username("email@email.com")
         assert isinstance(customer, customer_models.Customer)
         assert isinstance(customer.address, customer_models.Address)
+        assert isinstance(customer.phones, customer_models.CustomerPhones)
 
     def test_get_customer_by_id(self, monkeypatch):
         """Test get customer by ID"""

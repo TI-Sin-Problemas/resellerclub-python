@@ -175,8 +175,7 @@ class Customer(BaseCustomer):
         company: str,
         address: Address,
         total_receipts: float,
-        phone: str,
-        phone_country_code: str,
+        phones: CustomerPhones,
         status: str,
         website_count: int = None,
         language_preference: str = None,
@@ -193,8 +192,7 @@ class Customer(BaseCustomer):
         self.reseller_id = reseller_id
         self.status = status
         self.total_receipts = total_receipts
-        self.phone = phone
-        self.phone_country_code = phone_country_code
+        self.phones = phones
         self.website_count = website_count
         self.language_preference = language_preference
         self.two_factor_auth = two_factor_auth
@@ -224,6 +222,9 @@ class Customer(BaseCustomer):
             zip_code=None,
             other_state=None,
         )
+        phones = CustomerPhones(
+            phone_country_code=customer_data["telnocc"], phone=customer_data["telno"]
+        )
         return cls(
             _id=customer_data["customerid"],
             username=customer_data["username"],
@@ -233,8 +234,7 @@ class Customer(BaseCustomer):
             address=address,
             status=customer_data["customerstatus"],
             total_receipts=float(customer_data["totalreceipts"]),
-            phone=customer_data["telno"],
-            phone_country_code=customer_data["telnocc"],
+            phones=phones,
             website_count=int(customer_data["websitecount"]),
         )
 
@@ -264,6 +264,7 @@ class Customer(BaseCustomer):
             is_google_enabled=bool(data["twofactorgoogleauth_enabled"]),
             is_2fa_enabled=bool(data["twofactorauth_enabled"]),
         )
+        phones = CustomerPhones(phone_country_code=data["telnocc"], phone=data["telno"])
         return cls(
             _id=data["customerid"],
             username=data["username"],
@@ -272,8 +273,7 @@ class Customer(BaseCustomer):
             company=data["company"],
             address=address,
             total_receipts=float(data["totalreceipts"]),
-            phone=data["telno"],
-            phone_country_code=data["telnocc"],
+            phones=phones,
             status=data["customerstatus"],
             language_preference=data["langpref"],
             two_factor_auth=two_factor_auth,
