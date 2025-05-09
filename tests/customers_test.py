@@ -50,7 +50,7 @@ class TestSearchCustomers:
                 country="US",
                 zip_code="12345",
             ),
-            phones=customer_models.NewCustomerPhones(
+            phones=customer_models.CustomerPhones(
                 phone_country_code="1",
                 phone="1234567890",
             ),
@@ -71,6 +71,9 @@ class TestSearchCustomers:
         customers = self.api.customers.search(10, 1)
         assert all(isinstance(c, customer_models.Customer) for c in customers)
         assert all(isinstance(c.address, customer_models.Address) for c in customers)
+        assert all(
+            isinstance(c.phones, customer_models.CustomerPhones) for c in customers
+        )
 
     def test_get_customer_by_username(self, monkeypatch):
         """Test get customer by username"""
@@ -82,6 +85,7 @@ class TestSearchCustomers:
         customer = self.api.customers.get_by_username("email@email.com")
         assert isinstance(customer, customer_models.Customer)
         assert isinstance(customer.address, customer_models.Address)
+        assert isinstance(customer.phones, customer_models.CustomerPhones)
 
     def test_get_customer_by_id(self, monkeypatch):
         """Test get customer by ID"""
@@ -93,3 +97,21 @@ class TestSearchCustomers:
         customer = self.api.customers.get_by_id(30930235)
         assert isinstance(customer, customer_models.Customer)
         assert isinstance(customer.address, customer_models.Address)
+
+    def test_modify_customer(self, monkeypatch):
+        """Test modify customer"""
+        with open("tests/responses/customer_details.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+        customer = self.api.customers.get_by_id(30930235)
+
+        with open("tests/responses/modify_customer.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "post", mock.post)
+
+        customer.name = "Updated Name"
+        result = self.api.customers.modify(customer)
+
+        assert result is True
