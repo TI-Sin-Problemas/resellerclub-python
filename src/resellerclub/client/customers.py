@@ -179,3 +179,41 @@ class CustomersClient(BaseClient):
             customers.append(Customer.from_search(value))
 
         return SearchResponse(recsonpage, recsindb, customers)
+
+    def modify(self, customer: Customer) -> bool:
+        """
+        Modify customer details.
+
+        Args:
+            customer (Customer): The customer object with the modified details.
+
+        Returns:
+            bool: True if the customer details are modified successfully, False otherwise.
+        """
+        url = self._urls.customers.modify
+        if customer.id is None:
+            raise ValueError("Customer ID should not be None")
+        params = {
+            "customer-id": customer.id,
+            "username": customer.username,
+            "name": customer.name,
+            "company": customer.company,
+            "address-line-1": customer.address.line1,
+            "address-line-2": customer.address.line2,
+            "city": customer.address.city,
+            "state": customer.address.state,
+            "other-state": customer.address.other_state,
+            "country": customer.address.country,
+            "zipcode": customer.address.zip_code,
+            "phone-cc": customer.phones.phone_country_code,
+            "phone": customer.phones.phone,
+            "lang-pref": customer.language_preference,
+            "address-line-3": customer.address.line3,
+            "alt-phone-cc": customer.phones.alt_phone_country_code,
+            "alt-phone": customer.phones.alt_phone,
+            "fax-cc": customer.phones.fax_country_code,
+            "fax": customer.phones.fax,
+            "mobile-cc": customer.phones.mobile_country_code,
+            "mobile": customer.phones.mobile,
+        }
+        return bool(self._post(url, params))

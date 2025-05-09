@@ -97,3 +97,21 @@ class TestSearchCustomers:
         customer = self.api.customers.get_by_id(30930235)
         assert isinstance(customer, customer_models.Customer)
         assert isinstance(customer.address, customer_models.Address)
+
+    def test_modify_customer(self, monkeypatch):
+        """Test modify customer"""
+        with open("tests/responses/customer_details.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+        customer = self.api.customers.get_by_id(30930235)
+
+        with open("tests/responses/modify_customer.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "post", mock.post)
+
+        customer.name = "Updated Name"
+        result = self.api.customers.modify(customer)
+
+        assert result is True
