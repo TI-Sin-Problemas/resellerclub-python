@@ -52,7 +52,7 @@ class BaseCustomer:
         return self._id
 
 
-class NewCustomerPhones(t.NamedTuple):
+class CustomerPhones(t.NamedTuple):
     """
     Phone constructor.
 
@@ -87,7 +87,7 @@ class NewCustomer(BaseCustomer):
         name: str,
         company: str,
         address: Address,
-        phones: NewCustomerPhones,
+        phones: CustomerPhones,
         language_code: str,
         sms_consent: bool = None,
         vat_number: str = None,

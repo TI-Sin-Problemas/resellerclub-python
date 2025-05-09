@@ -50,7 +50,7 @@ class TestSearchCustomers:
                 country="US",
                 zip_code="12345",
             ),
-            phones=customer_models.NewCustomerPhones(
+            phones=customer_models.CustomerPhones(
                 phone_country_code="1",
                 phone="1234567890",
             ),
