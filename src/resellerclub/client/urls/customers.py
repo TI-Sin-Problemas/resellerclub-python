@@ -32,3 +32,8 @@ class CustomersURLs(BaseURLs):
     def modify(self) -> str:
         """Endpoint to modify customer details"""
         return f"{self.base_url}/modify.json"
+
+    @property
+    def generate_token(self) -> str:
+        """Endpoint to generate a token for a customer"""
+        return f"{self.base_url}/generate-token.json"
