@@ -69,15 +69,24 @@ class TestDomainAvailability:
         result_domains = [a.domain for a in result]
         assert sorted(expected_domains) == sorted(result_domains)
 
-    def test_multiple_domains_multiple_tlds(self):
+    def test_multiple_domains_multiple_tlds(self, monkeypatch):
         """Test multiple domains with multiple TLDs case"""
+        with open(
+            "tests/responses/domains/multiple_domains_multiple_tlds.txt", "rb"
+        ) as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         domains = self.domains
         tlds = self.tlds
         result = self.api.domains.check_availability(domains, tlds)
 
+        assert all(isinstance(a, domain_models.Availability) for a in result)
+
         expected_domains = [f"{domain}.{tld}" for domain in domains for tld in tlds]
         result_domains = [a.domain for a in result]
-        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
+        assert sorted(expected_domains) == sorted(result_domains)
 
 
 @pytest.mark.usefixtures("api_class")

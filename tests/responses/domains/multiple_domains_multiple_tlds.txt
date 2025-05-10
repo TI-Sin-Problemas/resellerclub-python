@@ -1,0 +1,1 @@
+{"google.com":{"classkey":"domcno","status":"regthroughothers"},"github.net":{"classkey":"dotnet","status":"regthroughothers"},"github.com":{"classkey":"domcno","status":"regthroughothers"},"google.net":{"classkey":"dotnet","status":"regthroughothers"}}
