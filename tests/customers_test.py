@@ -145,3 +145,17 @@ class TestSearchCustomers:
 
         assert isinstance(token, str)
         assert uuid.UUID(token).version == 4
+
+    def test_authenticate_token(self, monkeypatch):
+        """Test authenticate token"""
+        with open("tests/responses/authenticate_token.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        result = self.api.customers.authenticate_token(
+            token="89c4109f-ab08-4065-bf7f-8c41c2b1f34a"
+        )
+
+        assert isinstance(result, customer_models.Customer)
+        assert isinstance(result.address, customer_models.Address)
