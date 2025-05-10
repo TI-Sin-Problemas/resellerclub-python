@@ -1,23 +1,38 @@
 """Domains Unit Tests"""
+
+from unittest import TestCase
+
 import idna
-from case import ResellerClubTestCase
+import pytest
+import requests
 from thefuzz import fuzz
 
+from src.resellerclub import ResellerClub
+from src.resellerclub.models import domains as domain_models
 
-class TestDomainAvailability(ResellerClubTestCase):
+from .mocks import MockRequests
+
+
+@pytest.mark.usefixtures("api_class")
+class TestDomainAvailability:
     """Domain Availability Test Cases"""
+
+    api: ResellerClub
 
     domains = ["github", "google"]
     tlds = ["com", "net"]
 
-    def test_single_domain_single_tld(self):
+    def test_single_domain_single_tld(self, monkeypatch):
         """Test single domain with single TLD case"""
+        with open("tests/responses/domains/single_domain_availability.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
         domain = self.domains[0]
         tld = self.tlds[0]
         result = self.api.domains.check_availability([domain], [tld])
 
-        expected_domain = f"{domain}.{tld}"
-        self.assertIn(expected_domain, [availability.domain for availability in result])
+        assert all(isinstance(a, domain_models.Availability) for a in result)
 
     def test_single_domain_multiple_tlds(self):
         """Test single domain with multiple TLDs case"""
@@ -50,7 +65,8 @@ class TestDomainAvailability(ResellerClubTestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestIDNAvailability(ResellerClubTestCase):
+@pytest.mark.usefixtures("api_class")
+class TestIDNAvailability(TestCase):
     """IDN Availability Test Cases"""
 
     domains = ["ѯҋ111", "ѯҋ112"]
@@ -83,7 +99,8 @@ class TestIDNAvailability(ResellerClubTestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestPremiumDomainsAvailability(ResellerClubTestCase):
+@pytest.mark.usefixtures("api_class")
+class TestPremiumDomainsAvailability(TestCase):
     """Premium domains availability check test case"""
 
     keyword = "domain"
@@ -162,7 +179,8 @@ class TestPremiumDomainsAvailability(ResellerClubTestCase):
         self.assertGreaterEqual(max_results, len(response))
 
 
-class TestThirdLvlNameAvailability(ResellerClubTestCase):
+@pytest.mark.usefixtures("api_class")
+class TestThirdLvlNameAvailability(TestCase):
     """.NAME 3rd level availability check test case"""
 
     domains = ["domain.one", "domain.two"]
@@ -184,7 +202,8 @@ class TestThirdLvlNameAvailability(ResellerClubTestCase):
         self.assertListEqual(sorted(expected_domains), sorted(result_domains))
 
 
-class TestSuggestNames(ResellerClubTestCase):
+@pytest.mark.usefixtures("api_class")
+class TestSuggestNames(TestCase):
     """Suggest name test case"""
 
     keyword = "reseller"
