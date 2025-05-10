@@ -185,6 +185,7 @@ class Customer(BaseCustomer):
         user_email: str = None,
         creation_date: datetime = None,
         sales_contact_id: str = None,
+        sales_representative: str = None,
     ):
         super().__init__(
             _id=_id, username=username, name=name, company=company, address=address
@@ -201,6 +202,7 @@ class Customer(BaseCustomer):
         self.user_email = user_email
         self.creation_date = creation_date
         self.sales_contact_id = sales_contact_id
+        self.sales_representative = sales_representative
 
     @classmethod
     def from_search(cls, data: dict):
@@ -282,4 +284,36 @@ class Customer(BaseCustomer):
             user_email=data["useremail"],
             creation_date=datetime.fromtimestamp(int(data["creationdt"])),
             sales_contact_id=data["salescontactid"],
+        )
+
+    @classmethod
+    def from_auth(cls: t.Type["Customer"], data: dict):
+        address = Address(
+            line1=data["address1"],
+            city=data["city"],
+            state=data["state"],
+            country=data["country"],
+            zip_code=data["zip"],
+            other_state=data["other_state"],
+            line2=data.get("address2"),
+            line3=data.get("address3"),
+        )
+        phones = CustomerPhones(phone_country_code=data["telnocc"], phone=data["telno"])
+        return cls(
+            _id=data["customerid"],
+            username=data["username"],
+            reseller_id=data["resellerid"],
+            name=data["name"],
+            company=data["company"],
+            address=address,
+            total_receipts=float(data["totalreceipts"]),
+            phones=phones,
+            status=data["customerstatus"],
+            language_preference=data["langpref"],
+            pin=data["pin"],
+            is_password_expired=bool(data["ispasswdexpired"]),
+            user_email=data["useremail"],
+            creation_date=datetime.fromtimestamp(int(data["creationdt"])),
+            sales_contact_id=data["salescontactid"],
+            sales_representative=data["salesrepresentative"],
         )
