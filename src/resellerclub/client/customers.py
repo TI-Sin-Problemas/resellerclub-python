@@ -315,3 +315,18 @@ class CustomersClient(BaseClient):
         url = self._urls.customers.forgot_password
         params = {"username": username}
         return bool(self._get(url, params))
+
+    def delete(self, customer_id: int) -> bool:
+        """Deletes the specified customer.
+
+        For more details see: https://manage.resellerclub.com/kb/answer/886
+
+        Args:
+            customer_id (int): The ID of the customer to delete.
+
+        Returns:
+            bool: True if the customer is deleted successfully, False otherwise.
+        """
+        url = self._urls.customers.delete
+        params = {"customer-id": customer_id}
+        return bool(self._post(url, params))
