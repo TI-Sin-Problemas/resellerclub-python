@@ -1,5 +1,7 @@
 """Customers Unit Tests"""
 
+import uuid
+
 import pytest
 import requests
 
@@ -115,3 +117,17 @@ class TestSearchCustomers:
         result = self.api.customers.modify(customer)
 
         assert result is True
+
+    def test_generate_token(self, monkeypatch):
+        """Test generate token"""
+        with open("tests/responses/generate_token.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        token = self.api.customers.generate_token(
+            username="email@email.com", password="password9", ip_address="127.0.0.1"
+        )
+
+        assert isinstance(token, str)
+        assert uuid.UUID(token).version == 4
