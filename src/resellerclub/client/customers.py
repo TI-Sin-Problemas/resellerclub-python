@@ -217,3 +217,23 @@ class CustomersClient(BaseClient):
             "mobile": customer.phones.mobile,
         }
         return bool(self._post(url, params))
+
+    def generate_token(self, username: str, password: str, ip_address: str) -> str:
+        """
+        Generate a token for a customer.
+
+        Args:
+            username (str): The username of the customer.
+            password (str): The password of the customer.
+            ip_address (str): The IP address of the customer.
+
+        Returns:
+            str: The generated token.
+        """
+        url = self._urls.customers.generate_token
+        params = {
+            "username": username,
+            "passwd": password,
+            "ip": ip_address,
+        }
+        return self._get(url, params)
