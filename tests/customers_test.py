@@ -36,7 +36,7 @@ class TestSearchCustomers:
 
     def test_sign_up_customer(self, monkeypatch):
         """Test sign up a new customer"""
-        with open("tests/responses/sign_up.txt", "rb") as f:
+        with open("tests/responses/customers/sign_up.txt", "rb") as f:
             content = f.read()
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "post", mock.post)
@@ -66,7 +66,7 @@ class TestSearchCustomers:
 
     def test_search_first_ten_customers(self, monkeypatch):
         """Test search first ten customers"""
-        with open("tests/responses/customers.txt", "rb") as f:
+        with open("tests/responses/customers/customers.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -80,7 +80,7 @@ class TestSearchCustomers:
 
     def test_get_customer_by_username(self, monkeypatch):
         """Test get customer by username"""
-        with open("tests/responses/customer_details.txt", "rb") as f:
+        with open("tests/responses/customers/customer_details.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -92,7 +92,7 @@ class TestSearchCustomers:
 
     def test_get_customer_by_id(self, monkeypatch):
         """Test get customer by ID"""
-        with open("tests/responses/customer_details.txt", "rb") as f:
+        with open("tests/responses/customers/customer_details.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -103,13 +103,13 @@ class TestSearchCustomers:
 
     def test_modify_customer(self, monkeypatch):
         """Test modify customer"""
-        with open("tests/responses/customer_details.txt", "rb") as f:
+        with open("tests/responses/customers/customer_details.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
         customer = self.api.customers.get_by_id(30930235)
 
-        with open("tests/responses/modify_customer.txt", "rb") as f:
+        with open("tests/responses/customers/modify_customer.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "post", mock.post)
@@ -121,7 +121,7 @@ class TestSearchCustomers:
 
     def test_generate_token(self, monkeypatch):
         """Test generate token"""
-        with open("tests/responses/generate_token.txt", "rb") as f:
+        with open("tests/responses/customers/generate_token.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -135,7 +135,7 @@ class TestSearchCustomers:
 
     def test_generate_login_token(self, monkeypatch):
         """Test generate login token"""
-        with open("tests/responses/generate_login_token.txt", "rb") as f:
+        with open("tests/responses/customers/generate_login_token.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -149,7 +149,7 @@ class TestSearchCustomers:
 
     def test_authenticate_token(self, monkeypatch):
         """Test authenticate token"""
-        with open("tests/responses/authenticate_token.txt", "rb") as f:
+        with open("tests/responses/customers/authenticate_token.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -163,7 +163,7 @@ class TestSearchCustomers:
 
     def test_change_password(self, monkeypatch):
         """Test change password"""
-        with open("tests/responses/change_password.txt", "rb") as f:
+        with open("tests/responses/customers/change_password.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "post", mock.post)
@@ -176,7 +176,7 @@ class TestSearchCustomers:
 
     def test_forgot_password(self, monkeypatch):
         """Test forgot password"""
-        with open("tests/responses/forgot_password.txt", "rb") as f:
+        with open("tests/responses/customers/forgot_password.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -187,7 +187,7 @@ class TestSearchCustomers:
 
     def test_delete_customer(self, monkeypatch):
         """Test delete customer"""
-        with open("tests/responses/delete_customer.txt", "rb") as f:
+        with open("tests/responses/customers/delete_customer.txt", "rb") as f:
             response_content = f.read()
         mock = MockRequests(response_content=response_content)
         monkeypatch.setattr(requests, "post", mock.post)
