@@ -131,3 +131,17 @@ class TestSearchCustomers:
 
         assert isinstance(token, str)
         assert uuid.UUID(token).version == 4
+
+    def test_generate_login_token(self, monkeypatch):
+        """Test generate login token"""
+        with open("tests/responses/generate_login_token.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        token = self.api.customers.generate_login_token(
+            customer_id=30930235, ip_address="127.0.0.1"
+        )
+
+        assert isinstance(token, str)
+        assert uuid.UUID(token).version == 4
