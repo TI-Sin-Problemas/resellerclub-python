@@ -42,3 +42,8 @@ class CustomersURLs(BaseURLs):
     def generate_login_token(self) -> str:
         """Endpoint to generate a login token for a customer"""
         return f"{self.base_url}/generate-login-token.json"
+
+    @property
+    def authenticate_token(self) -> str:
+        """Endpoint to authenticate a token for a customer"""
+        return f"{self.base_url}/authenticate-token.json"
