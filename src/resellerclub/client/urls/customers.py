@@ -52,3 +52,8 @@ class CustomersURLs(BaseURLs):
     def change_password(self) -> str:
         """Endpoint to change a customer's password"""
         return f"{self.base_url}/change-password.json"
+
+    @property
+    def forgot_password(self) -> str:
+        """Endpoint to change a customer's password"""
+        return f"{self.base_url}/forgot-password.json"
