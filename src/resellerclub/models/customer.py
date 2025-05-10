@@ -288,6 +288,15 @@ class Customer(BaseCustomer):
 
     @classmethod
     def from_auth(cls: t.Type["Customer"], data: dict):
+        """Create a Customer object from a dictionary returned by the ResellerClub API
+        authentication endpoint.
+
+        Args:
+            data: A dictionary as returned by the ResellerClub API.
+
+        Returns:
+            Customer: A Customer object
+        """
         address = Address(
             line1=data["address1"],
             city=data["city"],

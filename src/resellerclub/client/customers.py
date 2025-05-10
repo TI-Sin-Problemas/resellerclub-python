@@ -279,3 +279,22 @@ class CustomersClient(BaseClient):
         url = self._urls.customers.authenticate_token
         params = {"token": token}
         return Customer.from_auth(self._get(url, params))
+
+    def change_password(self, customer_id: int, new_password: str) -> bool:
+        """Changes the password for the specified Customer.
+
+        For more details see: https://manage.resellerclub.com/kb/answer/806
+
+        Args:
+            customer_id (int): The Id of the Customer whose password needs to be changed.
+            new_password (str): The new password for the customer.
+
+        Returns:
+            bool: True if the password is changed successfully, False otherwise.
+        """
+        url = self._urls.customers.change_password
+        params = {
+            "customer-id": customer_id,
+            "new-passwd": new_password,
+        }
+        return bool(self._post(url, params))
