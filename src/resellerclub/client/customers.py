@@ -283,6 +283,8 @@ class CustomersClient(BaseClient):
     def change_password(self, customer_id: int, new_password: str) -> bool:
         """Changes the password for the specified Customer.
 
+        IMPORTANT: The password is sent in plain text as a query parameter.
+        Prefer using the forgot password method instead.
         For more details see: https://manage.resellerclub.com/kb/answer/806
 
         Args:
@@ -298,3 +300,18 @@ class CustomersClient(BaseClient):
             "new-passwd": new_password,
         }
         return bool(self._post(url, params))
+
+    def forgot_password(self, username: str) -> bool:
+        """Generates a forgot password email and sends it to the customer's email address.
+
+        For more details see: https://manage.resellerclub.com/kb/answer/2410
+
+        Args:
+            username (str): Username of the customer
+
+        Returns:
+            bool: True if the email is sent successfully, False otherwise.
+        """
+        url = self._urls.customers.forgot_password
+        params = {"username": username}
+        return bool(self._get(url, params))

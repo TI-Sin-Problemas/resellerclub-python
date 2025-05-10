@@ -173,3 +173,14 @@ class TestSearchCustomers:
         )
 
         assert result is True
+
+    def test_forgot_password(self, monkeypatch):
+        """Test forgot password"""
+        with open("tests/responses/forgot_password.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
+        result = self.api.customers.forgot_password(username="email@email.com")
+
+        assert result is True
