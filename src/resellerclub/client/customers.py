@@ -220,7 +220,10 @@ class CustomersClient(BaseClient):
 
     def generate_token(self, username: str, password: str, ip_address: str) -> str:
         """
-        Generate a token for a customer.
+        Authenticates a Customer by returning an authentication token on successful authentication.
+        The token will be valid for a duration of only 120 seconds.
+
+        For more details see: https://manage.resellerclub.com/kb/answer/818
 
         Args:
             username (str): The username of the customer.
@@ -234,6 +237,29 @@ class CustomersClient(BaseClient):
         params = {
             "username": username,
             "passwd": password,
+            "ip": ip_address,
+        }
+        return self._get(url, params)
+
+    def generate_login_token(self, customer_id: int, ip_address: str) -> str:
+        """Returns an authentication token for a Customer.
+
+        You can login to the Customer's Control Panel using the generated token.
+        The Control panel can be accessed at following link, where XXXXX is the generated token.
+        `http://manage.resellerclub.com/servlet/AutoLoginServlet?userLoginId=XXXXX&role=customer`
+
+        For more details see: https://manage.resellerclub.com/kb/answer/2942
+
+        Args:
+            customer_id (int): The ID of the customer.
+            ip_address (str): The IP address of the customer.
+
+        Returns:
+            str: The generated token.
+        """
+        url = self._urls.customers.generate_login_token
+        params = {
+            "customer-id": customer_id,
             "ip": ip_address,
         }
         return self._get(url, params)
