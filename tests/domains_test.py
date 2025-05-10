@@ -28,21 +28,29 @@ class TestDomainAvailability:
             content = f.read()
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "get", mock.get)
+
         domain = self.domains[0]
         tld = self.tlds[0]
         result = self.api.domains.check_availability([domain], [tld])
 
         assert all(isinstance(a, domain_models.Availability) for a in result)
 
-    def test_single_domain_multiple_tlds(self):
+    def test_single_domain_multiple_tlds(self, monkeypatch):
         """Test single domain with multiple TLDs case"""
+        with open("tests/responses/domains/single_domain_multiple_tlds.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         domain = self.domains[0]
         tlds = self.tlds
         result = self.api.domains.check_availability([domain], tlds)
 
+        assert all(isinstance(a, domain_models.Availability) for a in result)
+
         expected_domains = [f"{domain}.{tld}" for tld in tlds]
         result_domains = [a.domain for a in result]
-        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
+        assert sorted(expected_domains) == sorted(result_domains)
 
     def test_multiple_domains_single_tld(self):
         """Test multiple domains with single TLD case"""

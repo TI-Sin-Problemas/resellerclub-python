@@ -1,0 +1,1 @@
+{"github.com":{"classkey":"domcno","status":"regthroughothers"},"github.net":{"classkey":"dotnet","status":"regthroughothers"}}
