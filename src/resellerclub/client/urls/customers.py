@@ -47,3 +47,8 @@ class CustomersURLs(BaseURLs):
     def authenticate_token(self) -> str:
         """Endpoint to authenticate a token for a customer"""
         return f"{self.base_url}/authenticate-token.json"
+
+    @property
+    def change_password(self) -> str:
+        """Endpoint to change a customer's password"""
+        return f"{self.base_url}/change-password.json"
