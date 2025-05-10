@@ -19,11 +19,12 @@ class MockRequests:
         r._content = response_content
         self.response = r
 
-    def get(self, *args, **kwargs):
+    def get(self, *args, **kwargs):  # pylint: disable=unused-argument
         """Get mock response from API"""
         return self.response
 
-    def post(self, *args, **kwargs):
+    def post(self, *args, **kwargs):  # pylint: disable=unused-argument
+        """Post mock response from API"""
         return self.response
 
 
@@ -159,3 +160,16 @@ class TestSearchCustomers:
 
         assert isinstance(result, customer_models.Customer)
         assert isinstance(result.address, customer_models.Address)
+
+    def test_change_password(self, monkeypatch):
+        """Test change password"""
+        with open("tests/responses/change_password.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "post", mock.post)
+
+        result = self.api.customers.change_password(
+            customer_id=30930235, new_password="password9"
+        )
+
+        assert result is True
