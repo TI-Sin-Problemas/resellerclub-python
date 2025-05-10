@@ -184,3 +184,14 @@ class TestSearchCustomers:
         result = self.api.customers.forgot_password(username="email@email.com")
 
         assert result is True
+
+    def test_delete_customer(self, monkeypatch):
+        """Test delete customer"""
+        with open("tests/responses/delete_customer.txt", "rb") as f:
+            response_content = f.read()
+        mock = MockRequests(response_content=response_content)
+        monkeypatch.setattr(requests, "post", mock.post)
+
+        result = self.api.customers.delete(customer_id=31068890)
+
+        assert result is True
