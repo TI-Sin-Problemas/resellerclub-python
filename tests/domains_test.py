@@ -24,7 +24,9 @@ class TestDomainAvailability:
 
     def test_single_domain_single_tld(self, monkeypatch):
         """Test single domain with single TLD case"""
-        with open("tests/responses/domains/single_domain_availability.txt", "rb") as f:
+        with open(
+            "tests/responses/domains/availability/single_domain_availability.txt", "rb"
+        ) as f:
             content = f.read()
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -37,7 +39,9 @@ class TestDomainAvailability:
 
     def test_single_domain_multiple_tlds(self, monkeypatch):
         """Test single domain with multiple TLDs case"""
-        with open("tests/responses/domains/single_domain_multiple_tlds.txt", "rb") as f:
+        with open(
+            "tests/responses/domains/availability/single_domain_multiple_tlds.txt", "rb"
+        ) as f:
             content = f.read()
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -54,7 +58,9 @@ class TestDomainAvailability:
 
     def test_multiple_domains_single_tld(self, monkeypatch):
         """Test multiple domains with single TLD case"""
-        with open("tests/responses/domains/multiple_domains_single_tld.txt", "rb") as f:
+        with open(
+            "tests/responses/domains/availability/multiple_domains_single_tld.txt", "rb"
+        ) as f:
             content = f.read()
         mock = MockRequests(response_content=content)
         monkeypatch.setattr(requests, "get", mock.get)
@@ -72,7 +78,8 @@ class TestDomainAvailability:
     def test_multiple_domains_multiple_tlds(self, monkeypatch):
         """Test multiple domains with multiple TLDs case"""
         with open(
-            "tests/responses/domains/multiple_domains_multiple_tlds.txt", "rb"
+            "tests/responses/domains/availability/multiple_domains_multiple_tlds.txt",
+            "rb",
         ) as f:
             content = f.read()
         mock = MockRequests(response_content=content)
