@@ -288,13 +288,20 @@ class TestThirdLvlNameAvailability:
         assert all(isinstance(a, domain_models.Availability) for a in result)
         assert [expected_domain] == result_domains
 
-    def test_multiple_domain(self):
+    def test_multiple_domains(self, monkeypatch):
         """Test multiple domain case"""
+        with open(f"{self.responses_dir}/multiple_domains.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         result = self.api.domains.check_third_level_name_availability(self.domains)
 
         expected_domains = [f"{domain}.name" for domain in self.domains]
         result_domains = [a.domain for a in result]
-        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
+
+        assert all(isinstance(a, domain_models.Availability) for a in result)
+        assert sorted(expected_domains) == sorted(result_domains)
 
 
 @pytest.mark.usefixtures("api_class")
