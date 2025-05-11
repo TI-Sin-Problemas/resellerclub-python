@@ -1,7 +1,5 @@
 """Domains Unit Tests"""
 
-from unittest import TestCase
-
 import idna
 import pytest
 import requests
