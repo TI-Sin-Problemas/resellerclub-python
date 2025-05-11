@@ -202,14 +202,19 @@ class TestPremiumDomainsAvailability:
         assert is_keyword_in_domains is True, "Keyword is not in response"
         assert is_tld_in_domains is True, "TLD is not in response"
 
-    def test_highest_price(self):
+    def test_highest_price(self, monkeypatch):
         """Test highest price case"""
+        with open(f"{self.responses_dir}/highest_price.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         highest_price = self.highest_price
         params = [self.keyword, self.tlds[0], highest_price]
         response = self.api.domains.check_premium_domain_availability(*params)
         prices = [pd.price for pd in response]
 
-        self.assertGreaterEqual(highest_price, max(prices))
+        assert highest_price >= max(prices)
 
     def test_lowest_price(self):
         """Test lowest price case"""
