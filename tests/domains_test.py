@@ -305,17 +305,28 @@ class TestThirdLvlNameAvailability:
 
 
 @pytest.mark.usefixtures("api_class")
-class TestSuggestNames(TestCase):
+class TestSuggestNames:
     """Suggest name test case"""
 
-    keyword = "reseller"
+    api: ResellerClub
 
-    def test_keyword_only(self):
+    keyword = "reseller"
+    responses_dir = "tests/responses/domains/suggest_names"
+
+    def test_keyword_only(self, monkeypatch):
         """Test suggest names with keyword only"""
+        with open(f"{self.responses_dir}/keyword_only.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         suggestions = self.api.domains.suggest_names(self.keyword)
+
+        assert all(isinstance(s, domain_models.Suggestion) for s in suggestions)
+
         ratio_list = [fuzz.partial_ratio(s.domain, self.keyword) for s in suggestions]
         failed_message = "Some results are less than 75% similar"
-        self.assertFalse(any(ratio < 75 for ratio in ratio_list), failed_message)
+        assert any(ratio < 75 for ratio in ratio_list) is False, failed_message
 
     def test_tld(self):
         """Test suggest names with keyword and .com tld"""
