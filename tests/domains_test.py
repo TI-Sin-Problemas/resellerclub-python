@@ -126,18 +126,25 @@ class TestIDNAvailability:
         expected_domain = f"{punycode_domain}.{tld}"
         assert expected_domain in [a.domain for a in result]
 
-    def test_multiple_domains(self):
+    def test_multiple_domains(self, monkeypatch):
         """Test multiple IDNs case"""
+        with open(f"{self.responses_dir}/multiple_domains.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         domains = self.domains
         tld = self.tld
         result = self.api.domains.check_idn_availability(
             domains, tld, self.idn_language_code
         )
 
+        assert all(isinstance(a, domain_models.Availability) for a in result)
+
         punycode_domains = [idna.encode(domain).decode() for domain in domains]
         expected_domains = [f"{domain}.{tld}" for domain in punycode_domains]
         result_domains = [a.domain for a in result]
-        self.assertListEqual(sorted(expected_domains), sorted(result_domains))
+        assert sorted(expected_domains) == sorted(result_domains)
 
 
 @pytest.mark.usefixtures("api_class")
