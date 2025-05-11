@@ -265,18 +265,28 @@ class TestPremiumDomainsAvailability:
 
 
 @pytest.mark.usefixtures("api_class")
-class TestThirdLvlNameAvailability(TestCase):
+class TestThirdLvlNameAvailability:
     """.NAME 3rd level availability check test case"""
 
-    domains = ["domain.one", "domain.two"]
+    api: ResellerClub
 
-    def test_single_domain(self):
+    domains = ["domain.one", "domain.two"]
+    responses_dir = "tests/responses/domains/3rd_level_name_availability"
+
+    def test_single_domain(self, monkeypatch):
         """Test single domain case"""
+        with open(f"{self.responses_dir}/single_domain.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         result = self.api.domains.check_third_level_name_availability(self.domains[0])
 
         expected_domain = f"{self.domains[0]}.name"
         result_domains = [a.domain for a in result]
-        self.assertListEqual([expected_domain], sorted(result_domains))
+
+        assert all(isinstance(a, domain_models.Availability) for a in result)
+        assert [expected_domain] == result_domains
 
     def test_multiple_domain(self):
         """Test multiple domain case"""
