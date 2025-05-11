@@ -328,12 +328,20 @@ class TestSuggestNames:
         failed_message = "Some results are less than 75% similar"
         assert any(ratio < 75 for ratio in ratio_list) is False, failed_message
 
-    def test_tld(self):
+    def test_tld(self, monkeypatch):
         """Test suggest names with keyword and .com tld"""
+        with open(f"{self.responses_dir}/tld.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         tld = "com"
         suggestions = self.api.domains.suggest_names(self.keyword, tld)
+
+        assert all(isinstance(s, domain_models.Suggestion) for s in suggestions)
+
         assertion = all(s.domain.endswith(f".{tld}") for s in suggestions)
-        self.assertTrue(assertion, "Some results do not contain TLD")
+        assert assertion is True, "Some results do not contain TLD"
 
     def test_exact_match(self):
         """Test suggest names with keyword exact match"""
