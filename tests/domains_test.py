@@ -343,8 +343,14 @@ class TestSuggestNames:
         assertion = all(s.domain.endswith(f".{tld}") for s in suggestions)
         assert assertion is True, "Some results do not contain TLD"
 
-    def test_exact_match(self):
+    def test_exact_match(self, monkeypatch):
         """Test suggest names with keyword exact match"""
+        with open(f"{self.responses_dir}/exact_match.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         suggestions = self.api.domains.suggest_names(self.keyword, exact_match=True)
         assertion = all(s.domain.split(".")[0] == self.keyword for s in suggestions)
-        self.assertTrue(assertion, "Results are not exact match")
+
+        assert assertion is True, "Results are not exact match"
