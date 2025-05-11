@@ -230,16 +230,21 @@ class TestPremiumDomainsAvailability:
 
         assert lowest_price <= min(prices)
 
-    def test_highest_and_lowest_price(self):
+    def test_highest_and_lowest_price(self, monkeypatch):
         """Test highest and lowest price case"""
+        with open(f"{self.responses_dir}/highest_and_lowest_price.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         lowest_price = self.lowest_price
         highest_price = self.highest_price
         params = [self.keyword, self.tlds[0], highest_price, lowest_price]
         response = self.api.domains.check_premium_domain_availability(*params)
         prices = [pd.price for pd in response]
 
-        self.assertGreaterEqual(min(prices), lowest_price)
-        self.assertGreaterEqual(highest_price, max(prices))
+        assert lowest_price <= min(prices)
+        assert highest_price >= max(prices)
 
     def test_max_results(self):
         """Test max results case"""
