@@ -33,4 +33,4 @@ packages = ["src/resellerclub"]
 path = "src/resellerclub/__about__.py"
 
 [project.optional-dependencies]
-dev = ["black", "isort", "pylint", "pytest", "pytest-cov", "pytest-mock"]
+dev = ["black", "isort", "pylint", "pytest", "thefuzz"]

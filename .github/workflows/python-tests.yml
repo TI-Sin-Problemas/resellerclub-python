@@ -32,4 +32,4 @@ jobs:
         pip install .[dev]
     - name: Test with pytest
       run: |
-        pytest tests/customers_test.py
+        pytest

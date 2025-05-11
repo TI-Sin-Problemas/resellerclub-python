@@ -1,33 +1,9 @@
 """Domains API Client"""
 
-from typing import List, NamedTuple
+from typing import List
 
+from ..models.domains import Availability, PremiumDomain, Suggestion
 from .base import BaseClient
-
-
-class Availability(NamedTuple):
-    """Domain name availability for TLDs"""
-
-    domain: str
-    status: str
-    classkey: str = None
-
-
-class PremiumDomain(NamedTuple):
-    """Premium Domain"""
-
-    domain: str
-    price: float
-
-
-class Suggestion(NamedTuple):
-    """Domain name suggestion"""
-
-    domain: str
-    status: str
-    in_ga: bool
-    score: float
-    spin: str
 
 
 class DomainsClient(BaseClient):
