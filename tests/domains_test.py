@@ -148,28 +148,38 @@ class TestIDNAvailability:
 
 
 @pytest.mark.usefixtures("api_class")
-class TestPremiumDomainsAvailability(TestCase):
+class TestPremiumDomainsAvailability:
     """Premium domains availability check test case"""
+
+    api: ResellerClub
 
     keyword = "domain"
     tlds = ["com", "net", "org"]
     highest_price = 10000
     lowest_price = 100
     max_results = 10
+    responses_dir = "tests/responses/domains/premium_domain_availability"
 
-    def test_single_tld(self):
+    def test_single_tld(self, monkeypatch):
         """Test single TLD case"""
+        with open(f"{self.responses_dir}/single_tld.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         keyword = self.keyword
         tld = self.tlds[0]
 
         response = self.api.domains.check_premium_domain_availability(keyword, [tld])
 
+        assert all(isinstance(pd, domain_models.PremiumDomain) for pd in response)
+
         domains = [pd.domain for pd in response]
         is_keyword_in_domains = all(keyword in domain for domain in domains)
         is_tld_in_domains = all(domain.endswith(f".{tld}") for domain in domains)
 
-        self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
-        self.assertTrue(is_tld_in_domains, "TLD is not in response")
+        assert is_keyword_in_domains is True, "Keyword is not in response"
+        assert is_tld_in_domains is True, "TLD is not in response"
 
     def test_multiple_tlds(self):
         """Test multiple TLDs case"""
