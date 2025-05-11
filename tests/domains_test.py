@@ -181,19 +181,26 @@ class TestPremiumDomainsAvailability:
         assert is_keyword_in_domains is True, "Keyword is not in response"
         assert is_tld_in_domains is True, "TLD is not in response"
 
-    def test_multiple_tlds(self):
+    def test_multiple_tlds(self, monkeypatch):
         """Test multiple TLDs case"""
+        with open(f"{self.responses_dir}/multiple_tlds.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         keyword = self.keyword
         tlds = self.tlds
 
         response = self.api.domains.check_premium_domain_availability(keyword, tlds)
 
+        assert all(isinstance(pd, domain_models.PremiumDomain) for pd in response)
+
         domains = [pd.domain for pd in response]
         is_keyword_in_domains = all(keyword in key for key in domains)
         is_tld_in_domains = all(any(d.endswith(f".{t}") for d in domains) for t in tlds)
 
-        self.assertTrue(is_keyword_in_domains, "Keyword is not in response")
-        self.assertTrue(is_tld_in_domains, "TLD is not in response")
+        assert is_keyword_in_domains is True, "Keyword is not in response"
+        assert is_tld_in_domains is True, "TLD is not in response"
 
     def test_highest_price(self):
         """Test highest price case"""
