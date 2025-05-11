@@ -246,8 +246,13 @@ class TestPremiumDomainsAvailability:
         assert lowest_price <= min(prices)
         assert highest_price >= max(prices)
 
-    def test_max_results(self):
+    def test_max_results(self, monkeypatch):
         """Test max results case"""
+        with open(f"{self.responses_dir}/max_results.txt", "rb") as f:
+            content = f.read()
+        mock = MockRequests(response_content=content)
+        monkeypatch.setattr(requests, "get", mock.get)
+
         max_results = self.max_results
         params = {
             "keyword": self.keyword,
@@ -256,7 +261,7 @@ class TestPremiumDomainsAvailability:
         }
         response = self.api.domains.check_premium_domain_availability(**params)
 
-        self.assertGreaterEqual(max_results, len(response))
+        assert max_results >= len(response)
 
 
 @pytest.mark.usefixtures("api_class")
